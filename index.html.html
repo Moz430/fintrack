@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="FinTrack"/>
+<title>FinTrack</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0f1a;--surface:#111827;--border:#1e293b;
+  --green:#22d3a0;--blue:#60a5fa;--red:#ef4444;--yellow:#f5a623;--purple:#a78bfa;--orange:#fb923c;
+  --text:#e2e8f0;--muted:#64748b;--dim:#334155;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--green);border-radius:2px}
+
+.header{background:linear-gradient(135deg,#0f1728,#111827);border-bottom:1px solid var(--border);
+  padding:14px 18px env(safe-area-inset-top);position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;
+  background:linear-gradient(90deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:10px;color:var(--dim);letter-spacing:1px;margin-top:2px}
+.save-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);display:inline-block;margin-right:6px}
+.save-label{font-size:10px;color:var(--muted)}
+
+.tabs{display:flex;gap:0;background:var(--surface);border-top:1px solid var(--border);
+  position:sticky;top:60px;z-index:99;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:60px;padding:11px 4px;border:none;border-bottom:2px solid transparent;
+  background:transparent;color:var(--muted);font-family:'DM Mono',monospace;
+  font-size:9px;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+
+.main{padding:18px 16px calc(env(safe-area-inset-bottom) + 20px);max-width:700px;margin:0 auto}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:18px;position:relative;overflow:hidden;margin-bottom:14px}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--green),var(--blue),transparent)}
+.card-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+.input-group{margin-bottom:14px}
+.input-label{display:block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.input-wrap{position:relative}
+.prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--green);font-size:14px}
+.fin-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;
+  padding:11px 12px 11px 28px;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;
+  outline:none;transition:border-color .2s;-webkit-appearance:none}
+.fin-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,211,160,.08)}
+.fin-input.no-prefix{padding-left:12px}
+.fin-select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;
+  padding:11px 12px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;
+  outline:none;cursor:pointer;-webkit-appearance:none;appearance:none}
+
+.bar-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:7px}
+.bar-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+
+.bill-row{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px}
+.bill-row-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.bill-row-bottom{display:grid;grid-template-columns:1fr 36px;gap:8px;align-items:center}
+
+.btn-add{width:100%;padding:12px;border:1px dashed var(--border);border-radius:10px;
+  background:transparent;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;
+  letter-spacing:1px;cursor:pointer;transition:all .2s;margin-top:4px}
+.btn-add:active{background:rgba(34,211,160,.05);border-color:var(--green);color:var(--green)}
+.btn-remove{width:36px;height:36px;border:1px solid var(--border);border-radius:8px;
+  background:transparent;color:var(--muted);cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.btn-remove:active{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.08)}
+
+.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:500}
+.pill-green{background:rgba(34,211,160,.12);color:var(--green)}
+.pill-red{background:rgba(239,68,68,.12);color:var(--red)}
+.pill-yellow{background:rgba(245,166,35,.12);color:var(--yellow)}
+.pill-blue{background:rgba(96,165,250,.12);color:var(--blue)}
+.pill-orange{background:rgba(251,146,60,.12);color:var(--orange)}
+
+.section-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;color:#f1f5f9}
+
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;background:var(--border);
+  height:4px;border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;
+  background:var(--green);border-radius:50%;box-shadow:0 0 8px rgba(34,211,160,.5)}
+.range-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-top:4px}
+
+.isa-banner{background:linear-gradient(135deg,#0d2a1f,#0a1628);border:1px solid rgba(34,211,160,.25);
+  border-radius:12px;padding:16px;margin-bottom:16px}
+.isa-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);display:inline-block;margin-right:8px}
+
+.proj-table{width:100%;border-collapse:collapse;font-size:12px}
+.proj-table th{text-align:left;padding:7px 8px;font-size:9px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+.proj-table td{padding:9px 8px;border-bottom:1px solid #0f172a}
+.milestone td{background:rgba(34,211,160,.04)}
+
+.mini-bars{display:flex;align-items:flex-end;gap:3px;height:60px;margin:10px 0}
+.disclaimer{font-size:10px;color:var(--dim);line-height:1.7;padding:12px 14px;
+  background:#0f172a;border:1px solid var(--border);border-radius:10px;margin-top:14px}
+.health-wrap{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;padding:8px 0;border-bottom:1px solid #0f172a}
+.mini-stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px}
+.warn{font-size:10px;color:var(--yellow);margin-top:5px}
+
+/* ── DAILY SPENDS ── */
+.spend-row{display:flex;align-items:center;gap:10px;background:var(--bg);
+  border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px}
+.spend-info{flex:1;min-width:0}
+.spend-name{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spend-meta{font-size:10px;color:var(--muted);margin-top:2px}
+.spend-amount{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--orange);flex-shrink:0}
+
+.add-spend-form{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+.spend-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.spend-form-bottom{display:grid;grid-template-columns:1fr 100px;gap:8px}
+
+.budget-ring-wrap{display:flex;justify-content:center;margin:8px 0 14px}
+
+.day-group-title{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);
+  padding:6px 0 4px;margin-top:8px;border-top:1px solid var(--border)}
+
+.page{display:none}.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.page.active{animation:fadeUp .25s ease}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="logo">◈ FinTrack</div>
+      <div class="logo-sub">Personal Finance Dashboard</div>
+    </div>
+    <div><span class="save-dot"></span><span class="save-label">Auto-saved</span></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('overview',this)">Overview</button>
+  <button class="tab" onclick="showTab('daily',this)">Daily</button>
+  <button class="tab" onclick="showTab('bills',this)">Bills</button>
+  <button class="tab" onclick="showTab('savings',this)">Savings</button>
+  <button class="tab" onclick="showTab('isa',this)">S&amp;P ISA</button>
+</div>
+
+<div class="main">
+
+<!-- ═══ OVERVIEW ═══ -->
+<div id="page-overview" class="page active">
+  <div class="card">
+    <div class="section-title">Monthly Income</div>
+    <div class="input-wrap">
+      <span class="prefix">£</span>
+      <input class="fin-input" id="income" type="number" inputmode="decimal" placeholder="3,500.00" oninput="save();updateAll()"/>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-bottom:14px">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-label">Income</div>
+      <div style="font-family:Syne;font-size:18px;font-weight:700;color:var(--green)" id="ov-income">£0</div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-label">Fixed Bills</div>
+      <div style="font-family:Syne;font-size:18px;font-weight:700;color:var(--red)" id="ov-bills">£0</div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-label">Disposable</div>
+      <div style="font-family:Syne;font-size:18px;font-weight:700" id="ov-disp">£0</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Budget Breakdown</div>
+    <div id="breakdown-bars"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">This Month's Spending</div>
+    <div id="ov-spend-summary"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Financial Health</div>
+    <div class="health-wrap">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="33" fill="none" stroke="var(--border)" stroke-width="7"/>
+        <circle id="health-arc" cx="40" cy="40" r="33" fill="none" stroke="var(--green)" stroke-width="7"
+          stroke-dasharray="0 207.3" stroke-linecap="round" transform="rotate(-90 40 40)"
+          style="transition:stroke-dasharray .8s ease,stroke .4s"/>
+        <text id="health-score-text" x="40" y="45" text-anchor="middle" fill="var(--green)"
+          font-size="16" font-weight="700" font-family="Syne">0</text>
+      </svg>
+      <div>
+        <div id="health-label" style="font-family:Syne;font-size:18px;font-weight:700;color:var(--green)">—</div>
+        <div id="health-desc" style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Enter your income to get started.</div>
+      </div>
+    </div>
+    <div id="health-stats"></div>
+  </div>
+</div>
+
+<!-- ═══ DAILY SPENDS ═══ -->
+<div id="page-daily" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div>
+      <div class="section-title" style="margin-bottom:2px">Daily Spends</div>
+      <div style="font-size:11px;color:var(--muted)">Groceries, coffee, shopping…</div>
+    </div>
+    <div style="text-align:right">
+      <div class="card-label">This Month</div>
+      <div id="daily-month-total" style="font-family:Syne;font-size:22px;font-weight:700;color:var(--orange)">£0.00</div>
+    </div>
+  </div>
+
+  <!-- Budget bar -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div>
+        <div class="card-label">Monthly spend budget</div>
+        <div class="input-wrap" style="margin-top:4px">
+          <span class="prefix">£</span>
+          <input class="fin-input" id="spend-budget" type="number" inputmode="decimal" placeholder="400.00"
+            style="width:150px;font-size:13px;padding:8px 10px 8px 26px" oninput="save();updateAll()"/>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="card-label">Remaining</div>
+        <div id="daily-remaining" style="font-family:Syne;font-size:20px;font-weight:700;color:var(--green)">—</div>
+      </div>
+    </div>
+    <div class="bar-track" style="height:8px">
+      <div id="daily-budget-bar" class="bar-fill" style="width:0%;background:var(--orange)"></div>
+    </div>
+    <div id="daily-budget-label" style="font-size:10px;color:var(--muted);margin-top:5px"></div>
+  </div>
+
+  <!-- Add spend form -->
+  <div class="add-spend-form">
+    <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">+ Add Spend</div>
+    <div class="spend-form-grid">
+      <input class="fin-input no-prefix" id="new-spend-name" placeholder="e.g. Tesco" style="font-size:13px;padding:9px 10px"/>
+      <select class="fin-select" id="new-spend-cat">
+        <option>Groceries</option>
+        <option>Eating Out</option>
+        <option>Coffee</option>
+        <option>Transport</option>
+        <option>Shopping</option>
+        <option>Entertainment</option>
+        <option>Health</option>
+        <option>Petrol</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="spend-form-bottom">
+      <div class="input-wrap">
+        <span class="prefix">£</span>
+        <input class="fin-input" id="new-spend-amount" type="number" inputmode="decimal" placeholder="0.00"/>
+      </div>
+      <button onclick="addSpend()" style="background:linear-gradient(135deg,var(--green),#0ea5e9);border:none;
+        border-radius:10px;color:#0b0f1a;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;
+        padding:11px;cursor:pointer;letter-spacing:.5px">Add</button>
+    </div>
+  </div>
+
+  <!-- Category summary -->
+  <div class="card" id="spend-cats-card" style="display:none">
+    <div class="section-title">By Category</div>
+    <div id="spend-cats"></div>
+  </div>
+
+  <!-- History -->
+  <div id="spend-history-wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--dim)">Recent Spends</div>
+      <button onclick="clearOldSpends()" style="background:none;border:1px solid var(--border);border-radius:8px;
+        color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;padding:5px 10px;cursor:pointer">Clear old</button>
+    </div>
+    <div id="spend-list"></div>
+  </div>
+</div>
+
+<!-- ═══ BILLS ═══ -->
+<div id="page-bills" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div>
+      <div class="section-title" style="margin-bottom:2px">Outgoing Bills</div>
+      <div style="font-size:11px;color:var(--muted)">Fixed monthly expenses</div>
+    </div>
+    <div style="text-align:right">
+      <div class="card-label">Total</div>
+      <div id="bills-total-display" style="font-family:Syne;font-size:22px;font-weight:700;color:var(--red)">£0.00</div>
+    </div>
+  </div>
+  <div id="bills-list"></div>
+  <button class="btn-add" onclick="addBill()">+ Add Bill</button>
+  <div class="card" id="category-card" style="margin-top:16px;display:none">
+    <div class="section-title">By Category</div>
+    <div id="category-breakdown"></div>
+  </div>
+</div>
+
+<!-- ═══ SAVINGS ═══ -->
+<div id="page-savings" class="page">
+
+  <!-- Current pot + headline total -->
+  <div class="card" style="background:linear-gradient(135deg,#0a1628,#0d2a1f);border-color:rgba(96,165,250,.2)">
+    <div class="card-label">Total Savings Pot</div>
+    <div id="sav-total-big" style="font-family:Syne;font-size:36px;font-weight:800;color:var(--blue);line-height:1;margin-bottom:4px">£0</div>
+    <div id="sav-total-sub" style="font-size:11px;color:var(--muted)">Current balance + contributions + interest</div>
+  </div>
+
+  <!-- Inputs row -->
+  <div class="grid2" style="margin-bottom:0">
+    <div class="card">
+      <div class="section-title">Your Settings</div>
+
+      <div class="input-group">
+        <label class="input-label">Current savings balance</label>
+        <div class="input-wrap">
+          <span class="prefix">£</span>
+          <input class="fin-input" id="sav-current" type="number" inputmode="decimal" placeholder="5,000.00" oninput="save();updateAll()"/>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Monthly contribution</label>
+        <div class="input-wrap">
+          <span class="prefix">£</span>
+          <input class="fin-input" id="savings" type="number" inputmode="decimal" placeholder="500.00" oninput="save();updateAll()"/>
+        </div>
+      </div>
+
+      <div class="input-group" style="margin-bottom:0">
+        <label class="input-label">Interest rate (% p.a.)</label>
+        <div class="input-wrap">
+          <span class="prefix" style="color:var(--blue)">%</span>
+          <input class="fin-input" id="sav-rate-input" type="number" inputmode="decimal" placeholder="4.5" step="0.1" min="0" max="20" oninput="save();updateAll()"/>
+        </div>
+        <div style="font-size:10px;color:var(--dim);margin-top:5px">UK easy-access avg ~4.5% · Fixed 1yr ~5%</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Snapshot</div>
+      <div class="mini-stat" style="margin-bottom:10px">
+        <div class="card-label">Current balance</div>
+        <div id="sav-current-display" style="font-family:Syne;font-size:18px;font-weight:700;color:var(--blue)">£0</div>
+      </div>
+      <div class="mini-stat" style="margin-bottom:10px">
+        <div class="card-label">Adding per month</div>
+        <div id="sav-annual" style="font-family:Syne;font-size:18px;font-weight:700;color:var(--blue)">£0</div>
+      </div>
+      <div class="mini-stat">
+        <div class="card-label">Savings rate of income</div>
+        <div id="sav-rate" style="font-family:Syne;font-size:18px;font-weight:700;color:var(--blue)">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projection -->
+  <div class="card" style="margin-top:14px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+      <div>
+        <div class="section-title" style="margin-bottom:2px">Projection</div>
+        <div style="font-size:10px;color:var(--dim)">After <span id="sav-years-label">10</span> years at <span id="sav-rate-label">4.5</span>% p.a.</div>
+      </div>
+      <div style="text-align:right">
+        <div class="card-label">Projected total</div>
+        <div id="sav-proj" style="font-family:Syne;font-size:22px;font-weight:700;color:var(--blue)">£0</div>
+      </div>
+    </div>
+
+    <!-- Mini bar chart -->
+    <div class="mini-bars" id="sav-bars" style="margin-bottom:10px"></div>
+
+    <!-- Year table -->
+    <table class="proj-table">
+      <thead><tr><th>Year</th><th>Balance</th><th>Contributed</th><th>Interest earned</th></tr></thead>
+      <tbody id="sav-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Savings Benchmarks</div>
+    <div id="benchmarks"></div>
+  </div>
+</div>
+
+<!-- ═══ ISA ═══ -->
+<div id="page-isa" class="page">
+  <div class="isa-banner">
+    <div style="display:flex;align-items:center;margin-bottom:8px">
+      <span class="isa-dot"></span>
+      <span style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--green)">Stocks &amp; Shares ISA — S&amp;P 500 Tracker</span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.6">
+      Invest up to <strong style="color:#94a3b8">£20,000/year</strong> tax-free.
+      Projection uses S&amp;P 500 historical avg of <strong style="color:var(--green)">~10.43% p.a.</strong> nominal.
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">ISA Settings</div>
+    <div class="input-group">
+      <label class="input-label">Monthly ISA contribution</label>
+      <div class="input-wrap">
+        <span class="prefix">£</span>
+        <input class="fin-input" id="isa" type="number" inputmode="decimal" placeholder="200.00" oninput="save();updateAll()"/>
+      </div>
+      <div id="isa-warn" class="warn" style="display:none">⚠ Exceeds £20,000 annual ISA allowance</div>
+    </div>
+    <div class="input-group">
+      <label class="input-label">Investment horizon: <strong id="isa-years-label" style="color:var(--green)">10</strong> years</label>
+      <input type="range" id="isa-years" min="1" max="40" value="10" oninput="save();updateAll()"/>
+      <div class="range-labels"><span>1yr</span><span>20yr</span><span>40yr</span></div>
+    </div>
+    <div class="grid2">
+      <div class="mini-stat"><div class="card-label">Annual contribution</div><div id="isa-annual" style="font-family:Syne;font-size:15px;font-weight:700;color:var(--blue)">£0</div></div>
+      <div class="mini-stat"><div class="card-label">Total contributed</div><div id="isa-contrib-total" style="font-family:Syne;font-size:15px;font-weight:700;color:var(--purple)">£0</div></div>
+      <div class="mini-stat"><div class="card-label">Est. growth</div><div id="isa-growth" style="font-family:Syne;font-size:15px;font-weight:700;color:var(--green)">£0</div></div>
+      <div class="mini-stat"><div class="card-label">Final ISA value</div><div id="isa-final" style="font-family:Syne;font-size:15px;font-weight:700;color:var(--green)">£0</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">Projected Growth</div>
+    <div id="isa-big-value" style="font-family:Syne;font-size:28px;font-weight:800;color:var(--green);margin-bottom:4px">£0</div>
+    <div id="isa-gain-label" style="font-size:11px;color:var(--muted);margin-bottom:12px">—</div>
+    <div class="mini-bars" id="isa-bars"></div>
+  </div>
+  <div class="card" style="overflow-x:auto">
+    <div class="section-title">Year-by-Year</div>
+    <table class="proj-table">
+      <thead><tr><th>Yr</th><th>Contributed</th><th>ISA Value</th><th>Growth</th></tr></thead>
+      <tbody id="proj-tbody"></tbody>
+    </table>
+  </div>
+  <div class="disclaimer">
+    ⚠ <strong style="color:var(--muted)">Disclaimer:</strong> Projections use S&P 500 historical average returns (~10.43% nominal). Actual returns vary and can be negative. This is not financial advice. Always consult a qualified financial adviser before investing.
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── Constants ──────────────────────────────────────────────────────────────
+const BILL_CATS = ['Rent/Mortgage','Electricity','Gas','Water','Internet','Phone',
+  'Council Tax','Insurance','Subscriptions','Transport','Groceries','Other'];
+const SPEND_CATS = ['Groceries','Eating Out','Coffee','Transport','Shopping','Entertainment','Health','Petrol','Other'];
+const CAT_COLORS = {
+  'Groceries':'#22d3a0','Eating Out':'#fb923c','Coffee':'#f59e0b','Transport':'#60a5fa',
+  'Shopping':'#a78bfa','Entertainment':'#f472b6','Health':'#34d399','Petrol':'#94a3b8','Other':'#64748b'
+};
+
+// ── State ──────────────────────────────────────────────────────────────────
+let bills = [];
+let spends = []; // {id, name, category, amount, date (ISO string)}
+let nextBillId = 1;
+let nextSpendId = 1;
+
+// ── Storage ────────────────────────────────────────────────────────────────
+function save(){
+  try {
+    localStorage.setItem('fintrack_v3', JSON.stringify({
+      income: v('income'), savings: v('savings'), isa: v('isa'),
+      isaYears: document.getElementById('isa-years').value,
+      spendBudget: v('spend-budget'),
+      savCurrent: v('sav-current'),
+      savRateInput: document.getElementById('sav-rate-input')?.value||'',
+      bills, spends, nextBillId, nextSpendId
+    }));
+  } catch(e){}
+}
+
+function load(){
+  try {
+    const raw = localStorage.getItem('fintrack_v3');
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    set('income', d.income||''); set('savings', d.savings||'');
+    set('isa', d.isa||''); set('spend-budget', d.spendBudget||'');
+    set('sav-current', d.savCurrent||'');
+    set('sav-rate-input', d.savRateInput||'');
+    if(d.isaYears) document.getElementById('isa-years').value = d.isaYears;
+    bills = d.bills||[]; spends = d.spends||[];
+    nextBillId = d.nextBillId||1; nextSpendId = d.nextSpendId||1;
+    renderBills(); renderSpends();
+  } catch(e){}
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+const v = id => parseFloat(document.getElementById(id)?.value)||0;
+const set = (id,val) => { const el=document.getElementById(id); if(el) el.value=val; };
+const gbp = n => new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n);
+const pct = (a,b) => b ? ((a/b)*100).toFixed(1)+'%' : '—';
+const clamp = (v,mn,mx) => Math.max(mn,Math.min(mx,v));
+const today = () => new Date().toISOString().slice(0,10);
+const fmtDate = s => { const d=new Date(s); return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}); };
+
+function monthKey(iso){ return iso.slice(0,7); }
+function currentMonthSpends(){
+  const m = new Date().toISOString().slice(0,7);
+  return spends.filter(s=>s.date.startsWith(m));
+}
+function monthTotal(){ return currentMonthSpends().reduce((a,s)=>a+(s.amount||0),0); }
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+function showTab(name, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('page-'+name).classList.add('active');
+  updateAll();
+}
+
+// ── Daily Spends ───────────────────────────────────────────────────────────
+function addSpend(){
+  const name = document.getElementById('new-spend-name').value.trim();
+  const cat  = document.getElementById('new-spend-cat').value;
+  const amt  = parseFloat(document.getElementById('new-spend-amount').value)||0;
+  if(!amt) return;
+  spends.unshift({id:nextSpendId++, name:name||cat, category:cat, amount:amt, date:today()});
+  document.getElementById('new-spend-name').value='';
+  document.getElementById('new-spend-amount').value='';
+  renderSpends(); save(); updateAll();
+}
+
+function removeSpend(id){
+  spends = spends.filter(s=>s.id!==id);
+  renderSpends(); save(); updateAll();
+}
+
+function clearOldSpends(){
+  const m = new Date().toISOString().slice(0,7);
+  spends = spends.filter(s=>s.date.startsWith(m));
+  renderSpends(); save(); updateAll();
+}
+
+function renderSpends(){
+  const list = document.getElementById('spend-list');
+  const thisMonth = currentMonthSpends();
+
+  // Group by date
+  const groups = {};
+  thisMonth.forEach(s=>{ (groups[s.date]=groups[s.date]||[]).push(s); });
+  const sortedDates = Object.keys(groups).sort((a,b)=>b.localeCompare(a));
+
+  list.innerHTML = sortedDates.length ? sortedDates.map(date=>{
+    const daySpends = groups[date];
+    const dayTotal = daySpends.reduce((a,s)=>a+s.amount,0);
+    return `<div class="day-group-title">${fmtDate(date)} · <span style="color:var(--orange)">${gbp(dayTotal)}</span></div>`+
+      daySpends.map(s=>`
+        <div class="spend-row">
+          <div style="width:32px;height:32px;border-radius:8px;background:${CAT_COLORS[s.category]||'#64748b'}22;
+            display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+            ${catEmoji(s.category)}
+          </div>
+          <div class="spend-info">
+            <div class="spend-name">${s.name}</div>
+            <div class="spend-meta">${s.category}</div>
+          </div>
+          <div class="spend-amount">${gbp(s.amount)}</div>
+          <button class="btn-remove" onclick="removeSpend(${s.id})" style="margin-left:6px">×</button>
+        </div>`).join('');
+  }).join('') : '<div style="text-align:center;padding:24px;color:var(--dim);font-size:12px">No spends this month yet</div>';
+
+  // Category summary
+  const cats={};
+  thisMonth.forEach(s=>{ cats[s.category]=(cats[s.category]||0)+s.amount; });
+  const total = monthTotal();
+  const catCard = document.getElementById('spend-cats-card');
+  if(Object.keys(cats).length){
+    catCard.style.display='block';
+    document.getElementById('spend-cats').innerHTML=
+      Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,val])=>`
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+            <span style="color:var(--muted)">${catEmoji(cat)} ${cat}</span>
+            <span style="color:var(--text)">${gbp(val)} <span style="color:var(--dim)">(${total?((val/total)*100).toFixed(0):0}%)</span></span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:${total?(val/total*100):0}%;background:${CAT_COLORS[cat]||'var(--orange)'}"></div></div>
+        </div>`).join('');
+  } else { catCard.style.display='none'; }
+}
+
+function catEmoji(cat){
+  const map={'Groceries':'🛒','Eating Out':'🍽️','Coffee':'☕','Transport':'🚌',
+    'Shopping':'🛍️','Entertainment':'🎬','Health':'💊','Petrol':'⛽','Other':'📦'};
+  return map[cat]||'📦';
+}
+
+// ── Bills ──────────────────────────────────────────────────────────────────
+function addBill(){ bills.push({id:nextBillId++,name:'',category:'Other',amount:''}); renderBills(); save(); }
+function removeBill(id){ bills=bills.filter(b=>b.id!==id); renderBills(); save(); updateAll(); }
+function updateBill(id,field,val){ const b=bills.find(x=>x.id===id); if(b){b[field]=val;save();updateAll();} }
+function totalBillsAmt(){ return bills.reduce((s,b)=>s+(parseFloat(b.amount)||0),0); }
+
+function renderBills(){
+  const list=document.getElementById('bills-list');
+  list.innerHTML='';
+  bills.forEach(b=>{
+    const div=document.createElement('div');
+    div.className='bill-row';
+    div.innerHTML=`
+      <div class="bill-row-grid">
+        <input class="fin-input no-prefix" placeholder="e.g. Netflix" value="${b.name}"
+          oninput="updateBill(${b.id},'name',this.value)" style="font-size:13px;padding:9px 10px"/>
+        <select class="fin-select" onchange="updateBill(${b.id},'category',this.value)">
+          ${BILL_CATS.map(c=>`<option${c===b.category?' selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="bill-row-bottom">
+        <div class="input-wrap"><span class="prefix">£</span>
+          <input class="fin-input" type="number" inputmode="decimal" placeholder="0.00" value="${b.amount}"
+            oninput="updateBill(${b.id},'amount',this.value)"/>
+        </div>
+        <button class="btn-remove" onclick="removeBill(${b.id})">×</button>
+      </div>`;
+    list.appendChild(div);
+  });
+  updateAll();
+}
+
+// ── Projections ────────────────────────────────────────────────────────────
+function isaProjection(monthly,years){
+  const rate=0.1043/12; let bal=0; const h=[];
+  for(let m=0;m<=years*12;m++){ if(m>0) bal=(bal+monthly)*(1+rate); if(m%12===0) h.push(bal); }
+  return h;
+}
+function savingsProjection(monthly, years, rateAnnual, startBalance){
+  const rate=(rateAnnual||4.5)/100/12;
+  let bal=startBalance||0;
+  const h=[];
+  h.push(bal);
+  for(let m=1;m<=years*12;m++){
+    bal=bal*(1+rate)+monthly;
+    if(m%12===0) h.push(bal);
+  }
+  return h;
+}
+
+// ── Master Update ──────────────────────────────────────────────────────────
+function updateAll(){
+  const income=v('income'), totalBills=totalBillsAmt(), savings=v('savings'), isa=v('isa');
+  const spendBudget=v('spend-budget');
+  const isaYears=parseInt(document.getElementById('isa-years').value)||10;
+  const spent=monthTotal();
+  const disposable=income-totalBills-savings-isa;
+
+  // ── Overview ──
+  const dispEl=document.getElementById('ov-disp');
+  document.getElementById('ov-income').textContent=gbp(income);
+  document.getElementById('ov-bills').textContent=gbp(totalBills);
+  dispEl.textContent=gbp(disposable);
+  dispEl.style.color=disposable>=0?'var(--blue)':'var(--red)';
+
+  document.getElementById('breakdown-bars').innerHTML=[
+    {label:'Bills & Outgoings',val:totalBills,color:'var(--red)'},
+    {label:'Daily Spends (this month)',val:spent,color:'var(--orange)'},
+    {label:'Monthly Savings',val:savings,color:'var(--blue)'},
+    {label:'Stocks & Shares ISA',val:isa,color:'var(--green)'},
+    {label:'Remaining Disposable',val:Math.max(disposable-spent,0),color:'var(--purple)'},
+  ].map(item=>{
+    const w=income?clamp((item.val/income)*100,0,100):0;
+    return `<div style="margin-bottom:11px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+        <span style="color:var(--muted)">${item.label}</span>
+        <span style="color:${item.color};font-weight:500">${gbp(item.val)}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${w}%;background:${item.color}"></div></div>
+    </div>`;
+  }).join('');
+
+  // Overview spend summary
+  const thisMonthS=currentMonthSpends();
+  const spendCats={};
+  thisMonthS.forEach(s=>{ spendCats[s.category]=(spendCats[s.category]||0)+s.amount; });
+  document.getElementById('ov-spend-summary').innerHTML = spent>0 ?
+    `<div style="display:flex;justify-content:space-between;margin-bottom:10px">
+      <span style="color:var(--muted);font-size:12px">Total spent this month</span>
+      <span style="color:var(--orange);font-family:Syne;font-size:16px;font-weight:700">${gbp(spent)}</span>
+    </div>`+
+    (spendBudget?`<div class="bar-track" style="height:6px;margin-bottom:8px">
+      <div class="bar-fill" style="width:${clamp((spent/spendBudget)*100,0,100)}%;background:${spent>spendBudget?'var(--red)':'var(--orange)'}"></div>
+    </div>
+    <div style="font-size:10px;color:var(--muted)">${spent>spendBudget?'⚠ Over budget by '+gbp(spent-spendBudget):'£'+((spendBudget-spent).toFixed(2))+' left of £'+spendBudget.toFixed(2)+' budget'}</div>`:'') :
+    '<div style="font-size:12px;color:var(--dim);text-align:center;padding:8px 0">No spends logged this month — go to the Daily tab to add some.</div>';
+
+  // Health score
+  let score=100;
+  if(income){
+    const br=totalBills/income,sr=(savings+isa)/income;
+    if(br>0.7) score-=40; else if(br>0.5) score-=20;
+    if(sr<0.1) score-=20; else if(sr>=0.2) score+=10;
+    if(disposable<0) score-=30;
+    if(spendBudget && spent>spendBudget) score-=10;
+    score=clamp(score,0,100);
+  }
+  const hc=score>=70?'var(--green)':score>=40?'var(--yellow)':'var(--red)';
+  const circ=207.3;
+  document.getElementById('health-arc').setAttribute('stroke-dasharray',`${(score/100)*circ} ${circ}`);
+  document.getElementById('health-arc').style.stroke=hc;
+  document.getElementById('health-score-text').textContent=score;
+  document.getElementById('health-score-text').style.fill=hc;
+  document.getElementById('health-label').textContent=score>=70?'Healthy':score>=40?'Fair':'At Risk';
+  document.getElementById('health-label').style.color=hc;
+  document.getElementById('health-desc').textContent=score>=70?'Great job! Your finances look solid.':
+    score>=40?'Room to improve your savings ratio.':'Consider reducing bills or increasing income.';
+  document.getElementById('health-stats').innerHTML=`
+    <div class="stat-row"><span style="color:var(--muted)">Savings rate</span>
+      <span class="pill ${(savings+isa)/(income||1)>=0.2?'pill-green':'pill-yellow'}">${income?pct(savings+isa,income):'—'}</span></div>
+    <div class="stat-row"><span style="color:var(--muted)">Bills ratio</span>
+      <span class="pill ${totalBills/(income||1)>0.6?'pill-red':'pill-green'}">${income?pct(totalBills,income):'—'}</span></div>
+    <div class="stat-row"><span style="color:var(--muted)">Spent vs budget</span>
+      <span class="pill ${spendBudget&&spent>spendBudget?'pill-red':'pill-orange'}">${spendBudget?pct(spent,spendBudget)+' used':'—'}</span></div>
+    <div class="stat-row" style="border:none"><span style="color:var(--muted)">ISA/year</span>
+      <span class="pill pill-blue">${gbp(isa*12)}</span></div>`;
+
+  // ── Daily tab ──
+  document.getElementById('daily-month-total').textContent=gbp(spent);
+  const rem=spendBudget-spent;
+  const remEl=document.getElementById('daily-remaining');
+  if(spendBudget){
+    remEl.textContent=gbp(Math.abs(rem));
+    remEl.style.color=rem>=0?'var(--green)':'var(--red)';
+    document.getElementById('daily-budget-bar').style.width=clamp((spent/spendBudget)*100,0,100)+'%';
+    document.getElementById('daily-budget-bar').style.background=spent>spendBudget?'var(--red)':'var(--orange)';
+    document.getElementById('daily-budget-label').textContent=rem>=0?
+      `${gbp(rem)} remaining of ${gbp(spendBudget)} budget`:
+      `⚠ Over budget by ${gbp(Math.abs(rem))}`;
+  } else {
+    remEl.textContent='—';
+    document.getElementById('daily-budget-bar').style.width='0%';
+    document.getElementById('daily-budget-label').textContent='Set a budget above to track progress';
+  }
+
+  // ── Bills tab ──
+  document.getElementById('bills-total-display').textContent=gbp(totalBills);
+  const cats={};
+  bills.forEach(b=>{ const a=parseFloat(b.amount)||0; if(a) cats[b.category]=(cats[b.category]||0)+a; });
+  const catCard=document.getElementById('category-card');
+  if(Object.keys(cats).length){
+    catCard.style.display='block';
+    document.getElementById('category-breakdown').innerHTML=
+      Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,val])=>`
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+            <span style="color:var(--muted)">${cat}</span><span style="color:var(--text)">${gbp(val)}</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:${totalBills?(val/totalBills*100):0}%;background:linear-gradient(90deg,var(--red),#f97316)"></div></div>
+        </div>`).join('');
+  } else { catCard.style.display='none'; }
+
+  // ── Savings tab ──
+  const savCurrent = v('sav-current');
+  const savRateRaw = document.getElementById('sav-rate-input')?.value;
+  const savRate = savRateRaw !== '' && !isNaN(parseFloat(savRateRaw)) ? parseFloat(savRateRaw) : 4.5;
+  document.getElementById('sav-years-label').textContent = isaYears;
+  document.getElementById('sav-rate-label').textContent = savRate.toFixed(1);
+  document.getElementById('sav-annual').textContent = gbp(savings * 12);
+  document.getElementById('sav-rate').textContent = income ? pct(savings, income) : '—';
+  document.getElementById('sav-current-display').textContent = gbp(savCurrent);
+
+  const savProj = savingsProjection(savings, isaYears, savRate, savCurrent);
+  const savFinal = savProj[savProj.length - 1] || 0;
+  const savContribTotal = savings * 12 * isaYears;
+  const savInterestTotal = savFinal - savCurrent - savContribTotal;
+
+  document.getElementById('sav-proj').textContent = gbp(savFinal);
+  document.getElementById('sav-total-big').textContent = gbp(savFinal);
+  document.getElementById('sav-total-sub').textContent =
+    `${gbp(savCurrent)} now + ${gbp(savContribTotal)} contributions + ${gbp(Math.max(savInterestTotal,0))} interest over ${isaYears} yrs`;
+
+  // Savings mini bar chart
+  const savMaxV = Math.max(...savProj, 1);
+  const savStep = Math.max(1, Math.floor(savProj.length / 10));
+  const savBarData = savProj.filter((_,i) => i % savStep === 0 || i === savProj.length - 1).slice(0, 10);
+  document.getElementById('sav-bars').innerHTML = savBarData.map((val, i) => {
+    const h = Math.max((val / savMaxV) * 56, 3);
+    const op = 0.4 + (i / savBarData.length) * 0.6;
+    return `<div style="flex:1;background:linear-gradient(180deg,var(--blue),#6366f1);height:${h}px;border-radius:3px 3px 0 0;opacity:${op}"></div>`;
+  }).join('');
+
+  // Savings year table
+  document.getElementById('sav-tbody').innerHTML = savProj.map((val, i) => {
+    if (i === 0) return '';
+    const contrib = savCurrent + savings * 12 * i;
+    const interest = val - contrib;
+    const ms = i === 1 || i === 5 || i === 10 || i === 20 || i === isaYears;
+    return `<tr${ms ? ' class="milestone"' : ''}>
+      <td style="color:${ms?'var(--blue)':'var(--muted)'};font-weight:${ms?600:400}">${i}${ms?' ★':''}</td>
+      <td style="color:var(--blue);font-weight:${ms?600:400}">${gbp(val)}</td>
+      <td style="color:var(--purple)">${gbp(savings*12*i)}</td>
+      <td><span class="pill pill-blue">+${gbp(Math.max(interest,0))}</span></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('benchmarks').innerHTML=`
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+        <span style="color:var(--muted)">50/30/20 — Target savings</span><span style="color:var(--blue)">${gbp(income*0.2)}</span></div>
+      <div style="font-size:10px;color:var(--dim)">20% of income</div></div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+        <span style="color:var(--muted)">Emergency fund (3 months)</span><span style="color:var(--blue)">${gbp(totalBills*3)}</span></div>
+      <div style="font-size:10px;color:var(--dim)">3× monthly outgoings</div></div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+        <span style="color:var(--muted)">Emergency fund (6 months)</span><span style="color:var(--blue)">${gbp(totalBills*6)}</span></div>
+      <div style="font-size:10px;color:var(--dim)">6× monthly outgoings</div></div>`;
+
+  // ── ISA tab ──
+  document.getElementById('isa-years-label').textContent=isaYears;
+  document.getElementById('isa-warn').style.display=isa*12>20000?'block':'none';
+  const isap=isaProjection(isa,isaYears);
+  const isaFinal=isap[isap.length-1]||0;
+  const isaContrib=isa*12*isaYears;
+  const isaGrowth=isaFinal-isaContrib;
+  document.getElementById('isa-annual').textContent=gbp(isa*12);
+  document.getElementById('isa-contrib-total').textContent=gbp(isaContrib);
+  document.getElementById('isa-growth').textContent=gbp(isaGrowth);
+  document.getElementById('isa-final').textContent=gbp(isaFinal);
+  document.getElementById('isa-big-value').textContent=gbp(isaFinal);
+  document.getElementById('isa-gain-label').textContent=isaContrib>0?`${((isaGrowth/isaContrib)*100).toFixed(0)}% gain on contributions`:'—';
+  const maxV=Math.max(...isap,1);
+  const step=Math.max(1,Math.floor(isap.length/10));
+  const barData=isap.filter((_,i)=>i%step===0||i===isap.length-1).slice(0,10);
+  document.getElementById('isa-bars').innerHTML=barData.map((val,i)=>{
+    const h=Math.max((val/maxV)*56,3),op=0.5+((i/barData.length)*0.5);
+    return `<div style="flex:1;background:linear-gradient(180deg,var(--green),#0ea5e9);height:${h}px;border-radius:3px 3px 0 0;opacity:${op}"></div>`;
+  }).join('');
+  document.getElementById('proj-tbody').innerHTML=isap.map((val,i)=>{
+    if(i===0) return '';
+    const contrib=isa*12*i,growth=val-contrib;
+    const ms=i===5||i===10||i===20||i===30||i===isaYears;
+    return `<tr${ms?' class="milestone"':''}>
+      <td style="color:${ms?'var(--green)':'var(--muted)'};font-weight:${ms?600:400}">${i}${ms?' ★':''}</td>
+      <td style="color:var(--purple)">${gbp(contrib)}</td>
+      <td style="color:var(--green);font-weight:${ms?600:400}">${gbp(val)}</td>
+      <td><span class="pill pill-green">+${gbp(growth)}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+load();
+updateAll();
+</script>
+</body>
+</html>
