@@ -164,20 +164,27 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </div>
   </div>
 
-  <div class="grid3" style="margin-bottom:14px">
-    <div class="card" style="margin-bottom:0">
-      <div class="card-label">Income</div>
-      <div style="font-family:Syne;font-size:18px;font-weight:700;color:var(--green)" id="ov-income">£0</div>
-    </div>
-    <div class="card" style="margin-bottom:0">
-      <div class="card-label">Fixed Bills</div>
-      <div style="font-family:Syne;font-size:18px;font-weight:700;color:var(--red)" id="ov-bills">£0</div>
-    </div>
-    <div class="card" style="margin-bottom:0">
-      <div class="card-label">Disposable</div>
-      <div style="font-family:Syne;font-size:18px;font-weight:700" id="ov-disp">£0</div>
-    </div>
+<div class="grid2" style="margin-bottom:14px">
+  <div class="card" style="margin-bottom:0">
+    <div class="card-label">Income</div>
+    <div style="font-family:Syne;font-size:18px;font-weight:700;color:var(--green)" id="ov-income">£0</div>
   </div>
+
+  <div class="card" style="margin-bottom:0">
+    <div class="card-label">Fixed Bills</div>
+    <div style="font-family:Syne;font-size:18px;font-weight:700;color:var(--red)" id="ov-bills">£0</div>
+  </div>
+
+  <div class="card" style="margin-bottom:0">
+    <div class="card-label">Disposable</div>
+    <div style="font-family:Syne;font-size:18px;font-weight:700" id="ov-disp">£0</div>
+  </div>
+
+  <div class="card" style="margin-bottom:0">
+    <div class="card-label">Total Savings</div>
+    <div style="font-family:Syne;font-size:18px;font-weight:700;color:var(--blue)" id="ov-savings">£0</div>
+  </div>
+</div>
 
   <div class="card">
     <div class="section-title">Budget Breakdown</div>
@@ -853,7 +860,7 @@ function updateAll(){
   document.getElementById('sav-current-display').textContent = gbp(savCurrent);
 
   const savProj = savingsProjection(savings, isaYears, savRate, savCurrent);
-  const savFinal = savProj[savProj.length - 1] || 0;
+  const savFinal = savProj[savProj.length - 1] || 0;document.getElementById('ov-savings').textContent = gbp(savFinal);
   const savContribTotal = savings * 12 * isaYears;
   const savInterestTotal = savFinal - savCurrent - savContribTotal;
 
