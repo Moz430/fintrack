@@ -860,7 +860,8 @@ function updateAll(){
   document.getElementById('sav-current-display').textContent = gbp(savCurrent);
 
   const savProj = savingsProjection(savings, isaYears, savRate, savCurrent);
-  const savFinal = savProj[savProj.length - 1] || 0;document.getElementById('ov-savings').textContent = gbp(savFinal);
+  const savFinal = savProj[savProj.length - 1] || 0;
+  document.getElementById('ov-savings').textContent = gbp(savCurrent); // now shows current balance
   const savContribTotal = savings * 12 * isaYears;
   const savInterestTotal = savFinal - savCurrent - savContribTotal;
 
