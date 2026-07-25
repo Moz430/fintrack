@@ -258,32 +258,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div id="daily-budget-label" style="font-size:10px;color:var(--muted);margin-top:5px"></div>
   </div>
 
-  <!-- Add spend — same style as bill rows -->
-  <div class="bill-row" id="new-spend-row">
-    <div class="bill-row-grid">
-      <input class="fin-input no-prefix" id="new-spend-name" placeholder="e.g. Tesco" style="font-size:13px;padding:9px 10px"/>
-      <select class="fin-select" id="new-spend-cat">
-        <option>Groceries</option>
-        <option>Eating Out</option>
-        <option>Coffee</option>
-        <option>Transport</option>
-        <option>Shopping</option>
-        <option>Entertainment</option>
-        <option>Health</option>
-        <option>Petrol</option>
-        <option>Other</option>
-      </select>
-    </div>
-    <div class="bill-row-bottom">
-      <div class="input-wrap">
-        <span class="prefix">£</span>
-        <input class="fin-input" id="new-spend-amount" type="number" inputmode="decimal" placeholder="0.00"
-          onkeydown="if(event.key==='Enter') addSpend()"/>
-      </div>
-      <button onclick="addSpend()" class="btn-confirm">✓</button>
-    </div>
-  </div>
-  <button class="btn-add" onclick="focusNewSpend()">+ Add Spend</button>
+  <!-- Add spend rows rendered by JS, same as bills -->
+  <div id="spend-rows-list"></div>
+  <button class="btn-add" onclick="addSpendRow()">+ Add Spend</button>
 
   <!-- Category summary -->
   <div class="card" id="spend-cats-card" style="display:none">
@@ -612,19 +589,74 @@ function showTab(name, btn){
 }
 
 // ── Daily Spends ───────────────────────────────────────────────────────────
-function focusNewSpend(){
-  document.getElementById('new-spend-name').focus();
-  document.getElementById('new-spend-row').scrollIntoView({behavior:'smooth',block:'center'});
+let pendingSpends = []; // unsaved rows being edited
+let nextPendingId = 1;
+
+function addSpendRow(){
+  pendingSpends.push({pid: nextPendingId++, name:'', category:'Groceries', amount:''});
+  renderSpendRows();
 }
-function addSpend(){
-  const name = document.getElementById('new-spend-name').value.trim();
-  const cat  = document.getElementById('new-spend-cat').value;
-  const amt  = parseFloat(document.getElementById('new-spend-amount').value)||0;
-  if(!amt) return;
-  spends.unshift({id:nextSpendId++, name:name||cat, category:cat, amount:amt, date:today()});
-  document.getElementById('new-spend-name').value='';
-  document.getElementById('new-spend-amount').value='';
-  renderSpends(); save(); updateAll();
+
+function removePendingSpend(pid){
+  pendingSpends = pendingSpends.filter(p=>p.pid!==pid);
+  renderSpendRows();
+}
+
+function updatePending(pid, field, val){
+  const p = pendingSpends.find(x=>x.pid===pid);
+  if(p){
+    p[field] = val;
+    // auto-save to spends when amount is filled
+    if(p.amount && parseFloat(p.amount) > 0){
+      commitPending(pid);
+    }
+  }
+}
+
+function commitPending(pid){
+  const p = pendingSpends.find(x=>x.pid===pid);
+  if(!p || !p.amount || parseFloat(p.amount)<=0) return;
+  spends.unshift({
+    id: nextSpendId++,
+    name: p.name || p.category,
+    category: p.category,
+    amount: parseFloat(p.amount),
+    date: today()
+  });
+  pendingSpends = pendingSpends.filter(x=>x.pid!==pid);
+  renderSpendRows();
+  renderSpends();
+  save();
+  updateAll();
+}
+
+function renderSpendRows(){
+  const el = document.getElementById('spend-rows-list');
+  el.innerHTML = pendingSpends.map(p=>`
+    <div class="bill-row">
+      <div class="bill-row-grid">
+        <input class="fin-input no-prefix" placeholder="e.g. Tesco" value="${p.name}"
+          oninput="updatePendingField(${p.pid},'name',this.value)"
+          style="font-size:13px;padding:9px 10px"/>
+        <select class="fin-select" onchange="updatePendingField(${p.pid},'category',this.value)">
+          ${['Groceries','Eating Out','Coffee','Transport','Shopping','Entertainment','Health','Petrol','Other']
+            .map(c=>`<option${c===p.category?' selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="bill-row-bottom">
+        <div class="input-wrap">
+          <span class="prefix">£</span>
+          <input class="fin-input" type="number" inputmode="decimal" placeholder="0.00" value="${p.amount}"
+            oninput="updatePending(${p.pid},'amount',this.value)"/>
+        </div>
+        <button class="btn-remove" onclick="removePendingSpend(${p.pid})">×</button>
+      </div>
+    </div>`).join('');
+}
+
+function updatePendingField(pid, field, val){
+  const p = pendingSpends.find(x=>x.pid===pid);
+  if(p) p[field] = val;
 }
 
 function removeSpend(id){
