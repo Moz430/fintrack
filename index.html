@@ -770,10 +770,12 @@ function updatePendingField(pid,field,val){
 
 function updatePending(pid,field,val){
   const p=pendingSpends.find(x=>x.pid===pid);
-  if(p){
-    p[field]=val;
-    if(parseFloat(p.amount)>0) commitPending(pid);
-  }
+  if(p) p[field]=val;
+}
+
+function commitIfReady(pid){
+  const p=pendingSpends.find(x=>x.pid===pid);
+  if(p && parseFloat(p.amount)>0) commitPending(pid);
 }
 
 async function commitPending(pid){
@@ -802,7 +804,9 @@ function renderSpendRows(){
       <div class="bill-row-bottom">
         <div class="input-wrap"><span class="prefix">£</span>
           <input class="fin-input" type="number" inputmode="decimal" placeholder="0.00" value="${p.amount||''}"
-            oninput="updatePending(${p.pid},'amount',this.value)"/>
+            oninput="updatePending(${p.pid},'amount',this.value)"
+            onblur="commitIfReady(${p.pid})"
+            onkeydown="if(event.key==='Enter'){this.blur()}"/>
         </div>
         <button class="btn-remove" onclick="removePendingSpend(${p.pid})">×</button>
       </div>
