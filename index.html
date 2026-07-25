@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="FinTrack"/>
 <title>FinTrack</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -16,6 +16,7 @@
   --text:#e2e8f0;--muted:#64748b;--dim:#334155;
 }
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;overflow-x:hidden}
+[style*="Syne"],[class*="logo"],.section-title,.card-value{font-stretch:normal;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--green);border-radius:2px}
 
 .header{background:linear-gradient(135deg,#0f1728,#111827);border-bottom:1px solid var(--border);
@@ -82,7 +83,9 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
 .pill-blue{background:rgba(96,165,250,.12);color:var(--blue)}
 .pill-orange{background:rgba(251,146,60,.12);color:var(--orange)}
 
-.section-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;color:#f1f5f9}
+.section-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;color:#f1f5f9;font-stretch:normal}
+.logo{font-stretch:normal!important}
+*{font-stretch:normal!important}
 
 input[type=range]{width:100%;-webkit-appearance:none;appearance:none;background:var(--border);
   height:4px;border-radius:2px;outline:none;cursor:pointer}
@@ -109,13 +112,24 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .mini-stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px}
 .warn{font-size:10px;color:var(--yellow);margin-top:5px}
 
+/* ── TYPOGRAPHY — consistent number display ── */
+.big-number{font-family:'Inter',sans-serif;font-size:32px;font-weight:800;line-height:1.1;margin-bottom:6px;letter-spacing:-1px}
+.big-number-sub{font-size:11px;color:var(--muted);line-height:1.5}
+.stat-number{font-family:'Inter',sans-serif;font-size:18px;font-weight:700;line-height:1.2;margin-top:4px}
+
+/* ── CONFIRM BUTTON ── */
+.btn-confirm{width:36px;height:36px;border:none;border-radius:8px;
+  background:linear-gradient(135deg,var(--green),#0ea5e9);
+  color:#0b0f1a;cursor:pointer;font-size:16px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
 /* ── DAILY SPENDS ── */
 .spend-row{display:flex;align-items:center;gap:10px;background:var(--bg);
   border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px}
 .spend-info{flex:1;min-width:0}
 .spend-name{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .spend-meta{font-size:10px;color:var(--muted);margin-top:2px}
-.spend-amount{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--orange);flex-shrink:0}
+.spend-amount{font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:var(--orange);flex-shrink:0}
 
 .add-spend-form{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
 .spend-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
@@ -160,31 +174,24 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="section-title">Monthly Income</div>
     <div class="input-wrap">
       <span class="prefix">£</span>
-      <input class="fin-input" id="income" type="number" inputmode="decimal" placeholder="0.00" oninput="save();updateAll()"/>
+      <input class="fin-input" id="income" type="number" inputmode="decimal" placeholder="3,500.00" oninput="save();updateAll()"/>
     </div>
   </div>
 
-<div class="grid2" style="margin-bottom:14px">
-  <div class="card" style="margin-bottom:0">
-    <div class="card-label">Income</div>
-    <div style="font-family:Syne;font-size:18px;font-weight:700;color:var(--green)" id="ov-income">£0</div>
+  <div class="grid3" style="margin-bottom:14px">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-label">Income</div>
+      <div class="stat-number" style="color:var(--green)" id="ov-income">£0</div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-label">Fixed Bills</div>
+      <div class="stat-number" style="color:var(--red)" id="ov-bills">£0</div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-label">Disposable</div>
+      <div class="stat-number" id="ov-disp">£0</div>
+    </div>
   </div>
-
-  <div class="card" style="margin-bottom:0">
-    <div class="card-label">Fixed Bills</div>
-    <div style="font-family:Syne;font-size:18px;font-weight:700;color:var(--red)" id="ov-bills">£0</div>
-  </div>
-
-  <div class="card" style="margin-bottom:0">
-    <div class="card-label">Disposable</div>
-    <div style="font-family:Syne;font-size:18px;font-weight:700" id="ov-disp">£0</div>
-  </div>
-
-  <div class="card" style="margin-bottom:0">
-    <div class="card-label">Total Savings</div>
-    <div style="font-family:Syne;font-size:18px;font-weight:700;color:var(--blue)" id="ov-savings">£0</div>
-  </div>
-</div>
 
   <div class="card">
     <div class="section-title">Budget Breakdown</div>
@@ -225,7 +232,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </div>
     <div style="text-align:right">
       <div class="card-label">This Month</div>
-      <div id="daily-month-total" style="font-family:Syne;font-size:22px;font-weight:700;color:var(--orange)">£0.00</div>
+      <div id="daily-month-total" class="stat-number" style="color:var(--orange)">£0.00</div>
     </div>
   </div>
 
@@ -236,13 +243,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
         <div class="card-label">Monthly spend budget</div>
         <div class="input-wrap" style="margin-top:4px">
           <span class="prefix">£</span>
-          <input class="fin-input" id="spend-budget" type="number" inputmode="decimal" placeholder="0.00"
+          <input class="fin-input" id="spend-budget" type="number" inputmode="decimal" placeholder="400.00"
             style="width:150px;font-size:13px;padding:8px 10px 8px 26px" oninput="save();updateAll()"/>
         </div>
       </div>
       <div style="text-align:right">
         <div class="card-label">Remaining</div>
-        <div id="daily-remaining" style="font-family:Syne;font-size:20px;font-weight:700;color:var(--green)">—</div>
+        <div id="daily-remaining" class="stat-number" style="color:var(--green)">—</div>
       </div>
     </div>
     <div class="bar-track" style="height:8px">
@@ -251,10 +258,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div id="daily-budget-label" style="font-size:10px;color:var(--muted);margin-top:5px"></div>
   </div>
 
-  <!-- Add spend form -->
-  <div class="add-spend-form">
-    <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">+ Add Spend</div>
-    <div class="spend-form-grid">
+  <!-- Add spend — same style as bill rows -->
+  <div class="bill-row" id="new-spend-row">
+    <div class="bill-row-grid">
       <input class="fin-input no-prefix" id="new-spend-name" placeholder="e.g. Tesco" style="font-size:13px;padding:9px 10px"/>
       <select class="fin-select" id="new-spend-cat">
         <option>Groceries</option>
@@ -268,16 +274,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
         <option>Other</option>
       </select>
     </div>
-    <div class="spend-form-bottom">
+    <div class="bill-row-bottom">
       <div class="input-wrap">
         <span class="prefix">£</span>
-        <input class="fin-input" id="new-spend-amount" type="number" inputmode="decimal" placeholder="0.00"/>
+        <input class="fin-input" id="new-spend-amount" type="number" inputmode="decimal" placeholder="0.00"
+          onkeydown="if(event.key==='Enter') addSpend()"/>
       </div>
-      <button onclick="addSpend()" style="background:linear-gradient(135deg,var(--green),#0ea5e9);border:none;
-        border-radius:10px;color:#0b0f1a;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;
-        padding:11px;cursor:pointer;letter-spacing:.5px">Add</button>
+      <button onclick="addSpend()" class="btn-confirm">✓</button>
     </div>
   </div>
+  <button class="btn-add" onclick="focusNewSpend()">+ Add Spend</button>
 
   <!-- Category summary -->
   <div class="card" id="spend-cats-card" style="display:none">
@@ -305,7 +311,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </div>
     <div style="text-align:right">
       <div class="card-label">Total</div>
-      <div id="bills-total-display" style="font-family:Syne;font-size:22px;font-weight:700;color:var(--red)">£0.00</div>
+      <div id="bills-total-display" class="stat-number" style="color:var(--red)">£0.00</div>
     </div>
   </div>
   <div id="bills-list"></div>
@@ -319,78 +325,72 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 <!-- ═══ SAVINGS ═══ -->
 <div id="page-savings" class="page">
 
-  <!-- Current pot + headline total -->
-  <div class="card" style="background:linear-gradient(135deg,#0a1628,#0d2a1f);border-color:rgba(96,165,250,.2)">
-    <div class="card-label">Projected Savings Pot</div>
-    <div id="sav-total-big" style="font-family:Syne;font-size:36px;font-weight:500;color:var(--blue);line-height:1;margin-bottom:4px">£0</div>
-    <div id="sav-total-sub" style="font-size:11px;color:var(--muted)">Current balance + contributions + interest</div>
+  <!-- Total pot headline -->
+  <div class="card" style="background:linear-gradient(135deg,#0a1628,#0d2a1f);border-color:rgba(96,165,250,.25);margin-bottom:14px">
+    <div class="card-label" style="margin-bottom:10px">Total Savings Pot</div>
+    <div id="sav-total-big" class="big-number" style="color:var(--blue)">£0</div>
+    <div id="sav-total-sub" class="big-number-sub">Enter your balance below to see your projection</div>
   </div>
 
-  <!-- Inputs row -->
-  <div class="grid2" style="margin-bottom:0">
-    <div class="card">
-      <div class="section-title">Your Settings</div>
+  <!-- Settings inputs — full width stacked, clean and consistent -->
+  <div class="card">
+    <div class="section-title">Your Settings</div>
 
-      <div class="input-group">
-        <label class="input-label">Current savings balance</label>
-        <div class="input-wrap">
-          <span class="prefix">£</span>
-          <input class="fin-input" id="sav-current" type="number" inputmode="decimal" placeholder="0.00" oninput="save();updateAll()"/>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <label class="input-label">Monthly contribution</label>
-        <div class="input-wrap">
-          <span class="prefix">£</span>
-          <input class="fin-input" id="savings" type="number" inputmode="decimal" placeholder="0.00" oninput="save();updateAll()"/>
-        </div>
-      </div>
-
-      <div class="input-group" style="margin-bottom:0">
-        <label class="input-label">Interest rate (% p.a.)</label>
-        <div class="input-wrap">
-          <span class="prefix" style="color:var(--blue)">%</span>
-          <input class="fin-input" id="sav-rate-input" type="number" inputmode="decimal" placeholder="4.5" step="0.1" min="0" max="20" oninput="save();updateAll()"/>
-        </div>
-        <div style="font-size:10px;color:var(--dim);margin-top:5px">UK easy-access avg ~4.5% · Fixed 1yr ~5%</div>
+    <div class="input-group">
+      <label class="input-label">Current savings balance</label>
+      <div class="input-wrap">
+        <span class="prefix">£</span>
+        <input class="fin-input" id="sav-current" type="number" inputmode="decimal" placeholder="5,000.00" oninput="save();updateAll()"/>
       </div>
     </div>
 
-    <div class="card">
-      <div class="section-title">Snapshot</div>
-      <div class="mini-stat" style="margin-bottom:10px">
-        <div class="card-label">Current balance</div>
-        <div id="sav-current-display" style="font-family:Syne;font-size:18px;font-weight:700;color:var(--blue)">£0</div>
+    <div class="input-group">
+      <label class="input-label">Monthly contribution</label>
+      <div class="input-wrap">
+        <span class="prefix">£</span>
+        <input class="fin-input" id="savings" type="number" inputmode="decimal" placeholder="500.00" oninput="save();updateAll()"/>
       </div>
-      <div class="mini-stat" style="margin-bottom:10px">
-        <div class="card-label">Adding per month</div>
-        <div id="sav-annual" style="font-family:Syne;font-size:18px;font-weight:700;color:var(--blue)">£0</div>
+    </div>
+
+    <div class="input-group" style="margin-bottom:0">
+      <label class="input-label">Interest rate (% per year)</label>
+      <div class="input-wrap">
+        <span class="prefix" style="color:var(--blue)">%</span>
+        <input class="fin-input" id="sav-rate-input" type="number" inputmode="decimal" placeholder="4.5" step="0.1" min="0" max="20" oninput="save();updateAll()"/>
       </div>
-      <div class="mini-stat">
-        <div class="card-label">Savings rate of income</div>
-        <div id="sav-rate" style="font-family:Syne;font-size:18px;font-weight:700;color:var(--blue)">—</div>
-      </div>
+      <div style="font-size:10px;color:var(--dim);margin-top:5px">UK easy-access avg ~4.5% &nbsp;·&nbsp; Fixed 1yr ~5%</div>
+    </div>
+  </div>
+
+  <!-- Snapshot stats — consistent grid -->
+  <div class="grid3" style="margin-bottom:14px">
+    <div class="mini-stat">
+      <div class="card-label">Current balance</div>
+      <div id="sav-current-display" class="stat-number" style="color:var(--blue)">£0</div>
+    </div>
+    <div class="mini-stat">
+      <div class="card-label">Monthly adding</div>
+      <div id="sav-annual" class="stat-number" style="color:var(--blue)">£0</div>
+    </div>
+    <div class="mini-stat">
+      <div class="card-label">Savings rate</div>
+      <div id="sav-rate" class="stat-number" style="color:var(--blue)">—</div>
     </div>
   </div>
 
   <!-- Projection -->
-  <div class="card" style="margin-top:14px">
+  <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
       <div>
         <div class="section-title" style="margin-bottom:2px">Projection</div>
-        <div style="font-size:10px;color:var(--dim)">After <span id="sav-years-label">10</span> years at <span id="sav-rate-label">4.5</span>% p.a.</div>
+        <div style="font-size:10px;color:var(--dim)">After <span id="sav-years-label">10</span> yrs at <span id="sav-rate-label">4.5</span>% p.a.</div>
       </div>
       <div style="text-align:right">
         <div class="card-label">Projected total</div>
-        <div id="sav-proj" style="font-family:Syne;font-size:22px;font-weight:700;color:var(--blue)">£0</div>
+        <div id="sav-proj" class="stat-number" style="color:var(--blue);font-size:20px">£0</div>
       </div>
     </div>
-
-    <!-- Mini bar chart -->
     <div class="mini-bars" id="sav-bars" style="margin-bottom:10px"></div>
-
-    <!-- Year table -->
     <table class="proj-table">
       <thead><tr><th>Year</th><th>Balance</th><th>Contributed</th><th>Interest earned</th></tr></thead>
       <tbody id="sav-tbody"></tbody>
@@ -421,7 +421,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <label class="input-label">Monthly ISA contribution</label>
       <div class="input-wrap">
         <span class="prefix">£</span>
-        <input class="fin-input" id="isa" type="number" inputmode="decimal" placeholder="0.00" oninput="save();updateAll()"/>
+        <input class="fin-input" id="isa" type="number" inputmode="decimal" placeholder="200.00" oninput="save();updateAll()"/>
       </div>
       <div id="isa-warn" class="warn" style="display:none">⚠ Exceeds £20,000 annual ISA allowance</div>
     </div>
@@ -431,15 +431,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="range-labels"><span>1yr</span><span>20yr</span><span>40yr</span></div>
     </div>
     <div class="grid2">
-      <div class="mini-stat"><div class="card-label">Annual contribution</div><div id="isa-annual" style="font-family:Syne;font-size:15px;font-weight:700;color:var(--blue)">£0</div></div>
-      <div class="mini-stat"><div class="card-label">Total contributed</div><div id="isa-contrib-total" style="font-family:Syne;font-size:15px;font-weight:700;color:var(--purple)">£0</div></div>
-      <div class="mini-stat"><div class="card-label">Est. growth</div><div id="isa-growth" style="font-family:Syne;font-size:15px;font-weight:700;color:var(--green)">£0</div></div>
-      <div class="mini-stat"><div class="card-label">Final ISA value</div><div id="isa-final" style="font-family:Syne;font-size:15px;font-weight:700;color:var(--green)">£0</div></div>
+      <div class="mini-stat"><div class="card-label">Annual contribution</div><div id="isa-annual" class="stat-number" style="color:var(--blue)">£0</div></div>
+      <div class="mini-stat"><div class="card-label">Total contributed</div><div id="isa-contrib-total" class="stat-number" style="color:var(--purple)">£0</div></div>
+      <div class="mini-stat"><div class="card-label">Est. growth</div><div id="isa-growth" class="stat-number" style="color:var(--green)">£0</div></div>
+      <div class="mini-stat"><div class="card-label">Final ISA value</div><div id="isa-final" class="stat-number" style="color:var(--green)">£0</div></div>
     </div>
   </div>
   <div class="card">
     <div class="section-title">Projected Growth</div>
-    <div id="isa-big-value" style="font-family:Syne;font-size:28px;font-weight:800;color:var(--green);margin-bottom:4px">£0</div>
+    <div id="isa-big-value" class="big-number" style="color:var(--green)">£0</div>
     <div id="isa-gain-label" style="font-size:11px;color:var(--muted);margin-bottom:12px">—</div>
     <div class="mini-bars" id="isa-bars"></div>
   </div>
@@ -612,6 +612,10 @@ function showTab(name, btn){
 }
 
 // ── Daily Spends ───────────────────────────────────────────────────────────
+function focusNewSpend(){
+  document.getElementById('new-spend-name').focus();
+  document.getElementById('new-spend-row').scrollIntoView({behavior:'smooth',block:'center'});
+}
 function addSpend(){
   const name = document.getElementById('new-spend-name').value.trim();
   const cat  = document.getElementById('new-spend-cat').value;
@@ -861,7 +865,6 @@ function updateAll(){
 
   const savProj = savingsProjection(savings, isaYears, savRate, savCurrent);
   const savFinal = savProj[savProj.length - 1] || 0;
-  document.getElementById('ov-savings').textContent = gbp(savCurrent); // now shows current balance
   const savContribTotal = savings * 12 * isaYears;
   const savInterestTotal = savFinal - savCurrent - savContribTotal;
 
