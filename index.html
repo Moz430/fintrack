@@ -19,19 +19,26 @@
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--green);border-radius:2px}
 
-/* ── AUTH SCREEN ── */
+/* ── AUTH INPUTS — Calibri / system font ── */
+.auth-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;color:var(--text);font-family:Calibri,'Trebuchet MS','Gill Sans',sans-serif;
+  font-size:15px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.auth-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,211,160,.08)}
+.auth-input::placeholder{color:var(--dim)}
 .auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;
   min-height:100vh;padding:24px;background:var(--bg)}
 .auth-card{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--border);
-  border-radius:20px;padding:32px;position:relative;overflow:hidden}
+  border-radius:20px;padding:32px;position:relative;overflow:hidden;
+  font-family:Calibri,'Trebuchet MS','Gill Sans',sans-serif}
 .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,var(--green),var(--blue))}
 .auth-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;text-align:center;margin-bottom:6px;
   background:linear-gradient(90deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .auth-sub{font-size:11px;color:var(--muted);text-align:center;letter-spacing:1px;margin-bottom:28px}
 .auth-tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:24px}
+.auth-card .input-label{font-family:Calibri,'Trebuchet MS','Gill Sans',sans-serif;font-size:13px;letter-spacing:0;text-transform:none;color:var(--muted)}
 .auth-tab{flex:1;padding:8px;border:none;border-radius:8px;background:transparent;
-  color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s}
+  color:var(--muted);font-family:Calibri,'Trebuchet MS','Gill Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
 .auth-tab.active{background:var(--surface);color:var(--green);border:1px solid var(--border)}
 .auth-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;
   padding:10px 12px;font-size:12px;color:var(--red);margin-bottom:14px;display:none}
@@ -39,10 +46,10 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
   padding:10px 12px;font-size:12px;color:var(--green);margin-bottom:14px;display:none}
 .auth-btn{width:100%;padding:13px;border:none;border-radius:10px;
   background:linear-gradient(135deg,var(--green),#0ea5e9);color:#0b0f1a;
-  font-family:'DM Mono',monospace;font-size:13px;font-weight:600;cursor:pointer;
-  letter-spacing:.5px;margin-top:6px;transition:opacity .2s}
+  font-family:Calibri,'Trebuchet MS','Gill Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;
+  letter-spacing:.3px;margin-top:6px;transition:opacity .2s}
 .auth-btn:disabled{opacity:.5;cursor:not-allowed}
-.auth-divider{text-align:center;font-size:10px;color:var(--dim);margin:16px 0;letter-spacing:1px}
+.auth-divider{text-align:center;font-size:12px;color:var(--dim);margin:16px 0}
 
 /* ── HEADER ── */
 .header{background:linear-gradient(135deg,#0f1728,#111827);border-bottom:1px solid var(--border);
@@ -191,11 +198,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div id="auth-login">
       <div class="input-group">
         <label class="input-label">Email</label>
-        <input class="fin-input no-prefix" id="login-email" type="email" inputmode="email" placeholder="you@example.com"/>
+        <input class="auth-input" id="login-email" type="email" inputmode="email" placeholder="you@example.com"/>
       </div>
       <div class="input-group">
         <label class="input-label">Password</label>
-        <input class="fin-input no-prefix" id="login-password" type="password" placeholder="••••••••"/>
+        <input class="auth-input" id="login-password" type="password" placeholder="••••••••"/>
       </div>
       <button class="auth-btn" onclick="signIn()">Sign In</button>
       <div class="auth-divider">Forgot your password?</div>
@@ -205,15 +212,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div id="auth-signup" style="display:none">
       <div class="input-group">
         <label class="input-label">Email</label>
-        <input class="fin-input no-prefix" id="signup-email" type="email" inputmode="email" placeholder="you@example.com"/>
+        <input class="auth-input" id="signup-email" type="email" inputmode="email" placeholder="you@example.com"/>
       </div>
       <div class="input-group">
         <label class="input-label">Password</label>
-        <input class="fin-input no-prefix" id="signup-password" type="password" placeholder="Min 6 characters"/>
+        <input class="auth-input" id="signup-password" type="password" placeholder="Min 6 characters"/>
       </div>
       <div class="input-group">
         <label class="input-label">Confirm Password</label>
-        <input class="fin-input no-prefix" id="signup-confirm" type="password" placeholder="Repeat password"/>
+        <input class="auth-input" id="signup-confirm" type="password" placeholder="Repeat password"/>
       </div>
       <button class="auth-btn" onclick="signUp()">Create Account</button>
     </div>
@@ -450,6 +457,23 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
         <div><div style="font-family:Syne;font-size:15px;font-weight:700">Export Backup</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Download all data as a file</div></div>
       </div>
       <button onclick="exportData()" style="width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--green),#0ea5e9);color:#0b0f1a;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;cursor:pointer">↓ Export Backup File</button>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="width:40px;height:40px;border-radius:10px;background:rgba(96,165,250,.12);display:flex;align-items:center;justify-content:center;font-size:20px">📂</div>
+        <div><div style="font-family:Syne;font-size:15px;font-weight:700">Restore from Backup</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Load a previously exported file</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6">
+        Select a <strong style="color:var(--muted)">fintrack-backup.json</strong> file. This will overwrite your current data — export first if needed.
+      </div>
+      <label style="display:block;width:100%;padding:13px;border:1px solid var(--blue);border-radius:10px;
+        background:rgba(96,165,250,.08);color:var(--blue);font-family:'DM Mono',monospace;
+        font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.5px;text-align:center">
+        ↑ Choose Backup File
+        <input type="file" accept=".json" onchange="importData(event)" style="display:none"/>
+      </label>
+      <div id="import-status" style="margin-top:10px;font-size:12px;display:none"></div>
     </div>
     <div class="card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
@@ -998,6 +1022,60 @@ function updateSummary(){
     {label:'Current savings pot',val:gbp(v('sav-current')),color:'var(--blue)'},
     {label:'Monthly ISA',val:gbp(v('isa')),color:'var(--green)'},
   ].map(r=>`<div class="stat-row"><span style="color:var(--muted)">${r.label}</span><span style="color:${r.color};font-size:12px">${r.val}</span></div>`).join('');
+}
+
+// ── Import ─────────────────────────────────────────────────────────────────
+async function importData(event){
+  const file = event.target.files[0];
+  if(!file || !currentUser) return;
+  const reader = new FileReader();
+  reader.onload = async function(e){
+    try {
+      const d = JSON.parse(e.target.result);
+      if(!d._version) throw new Error('Invalid file');
+      const status = document.getElementById('import-status');
+      status.style.display='block';
+      status.innerHTML='<span style="color:var(--yellow)">⏳ Restoring…</span>';
+
+      // Restore settings
+      set('income', d.income||''); set('savings', d.savings||'');
+      set('isa', d.isa||''); set('spend-budget', d.spendBudget||'');
+      set('sav-current', d.savCurrent||'');
+      set('sav-rate-input', d.savRateInput||'');
+      if(d.isaYears) document.getElementById('isa-years').value = d.isaYears;
+      await saveSettings();
+
+      // Restore bills — delete existing then re-insert
+      await sb.from('bills').delete().eq('user_id', currentUser.id);
+      bills = [];
+      if(d.bills && d.bills.length){
+        const rows = d.bills.map(b=>({user_id:currentUser.id, name:b.name||'', category:b.category||'Other', amount:parseFloat(b.amount)||0}));
+        const {data} = await sb.from('bills').insert(rows).select();
+        bills = (data||[]).map(b=>({id:b.id, name:b.name, category:b.category, amount:b.amount}));
+      }
+      renderBills();
+
+      // Restore spends — delete existing then re-insert
+      await sb.from('spends').delete().eq('user_id', currentUser.id);
+      spends = [];
+      if(d.spends && d.spends.length){
+        const rows = d.spends.map(s=>({user_id:currentUser.id, name:s.name||'', category:s.category||'Other', amount:parseFloat(s.amount)||0, date:s.date||today()}));
+        const {data} = await sb.from('spends').insert(rows).select();
+        spends = (data||[]).map(s=>({id:s.id, name:s.name, category:s.category, amount:s.amount, date:s.date}));
+      }
+      renderSpends();
+      updateAll();
+
+      const exported = d._exported ? new Date(d._exported).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : 'unknown date';
+      status.innerHTML=`<span style="color:var(--green)">✓ Restored successfully!</span><br><span style="color:var(--dim);font-size:10px">Backup was from ${exported}</span>`;
+    } catch(err) {
+      const status = document.getElementById('import-status');
+      status.style.display='block';
+      status.innerHTML=`<span style="color:var(--red)">✗ Invalid file — please choose a FinTrack backup file</span>`;
+    }
+  };
+  reader.readAsText(file);
+  event.target.value='';
 }
 
 // ── Export ─────────────────────────────────────────────────────────────────
