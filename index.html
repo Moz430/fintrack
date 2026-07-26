@@ -395,17 +395,72 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
   <!-- ═══ ISA ═══ -->
   <div id="page-isa" class="page">
-    <div class="isa-banner">
-      <div style="display:flex;align-items:center;margin-bottom:8px">
-        <span style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);display:inline-block;margin-right:8px"></span>
-        <span style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--green)">Stocks &amp; Shares ISA — S&amp;P 500 Tracker</span>
+
+    <!-- Live S&P 500 card -->
+    <div class="card" style="background:linear-gradient(135deg,#0d2a1f,#0a1628);border-color:rgba(34,211,160,.25);margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);display:inline-block"></span>
+          <span style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green)">S&amp;P 500 Live</span>
+        </div>
+        <button onclick="fetchSP500()" id="sp-refresh-btn" style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:11px;padding:4px 10px;cursor:pointer">↻ Refresh</button>
       </div>
+      <div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap">
+        <div>
+          <div class="card-label">Index Level</div>
+          <div id="sp-price" class="big-number" style="color:var(--green);font-size:28px">—</div>
+        </div>
+        <div>
+          <div class="card-label">Today's Change</div>
+          <div id="sp-change" class="stat-number" style="font-size:16px">—</div>
+        </div>
+        <div>
+          <div class="card-label">% Change</div>
+          <div id="sp-pct" class="stat-number" style="font-size:16px">—</div>
+        </div>
+        <div>
+          <div class="card-label">52-Week Range</div>
+          <div id="sp-range" style="font-size:12px;color:var(--muted);margin-top:4px">—</div>
+        </div>
+      </div>
+      <div id="sp-updated" style="font-size:10px;color:var(--dim);margin-top:10px"></div>
+    </div>
+
+    <!-- Portfolio tracker -->
+    <div class="card">
+      <div class="section-title">My Portfolio</div>
+      <div class="grid2" style="margin-bottom:14px">
+        <div class="input-group" style="margin-bottom:0">
+          <label class="input-label">Amount invested (£)</label>
+          <div class="input-wrap"><span class="prefix">£</span>
+            <input class="fin-input" id="portfolio-invested" type="number" inputmode="decimal" placeholder="5,000.00" oninput="debounceSave();updatePortfolio()"/>
+          </div>
+        </div>
+        <div class="input-group" style="margin-bottom:0">
+          <label class="input-label">S&amp;P 500 level when invested</label>
+          <div class="input-wrap"><span class="prefix" style="color:var(--blue);font-size:11px;left:8px">$</span>
+            <input class="fin-input" id="portfolio-entry" type="number" inputmode="decimal" placeholder="e.g. 4800" oninput="debounceSave();updatePortfolio()"/>
+          </div>
+        </div>
+      </div>
+      <div class="grid3">
+        <div class="mini-stat"><div class="card-label">Invested</div><div id="port-invested-display" class="stat-number" style="color:var(--blue)">£0</div></div>
+        <div class="mini-stat"><div class="card-label">Current value (est.)</div><div id="port-current" class="stat-number" style="color:var(--green)">—</div></div>
+        <div class="mini-stat"><div class="card-label">Gain / Loss</div><div id="port-gain" class="stat-number">—</div></div>
+      </div>
+      <div style="font-size:10px;color:var(--dim);margin-top:12px;line-height:1.6">
+        Estimated value based on S&amp;P 500 performance since your entry point. Does not account for fund fees, currency movement, or dividend reinvestment.
+      </div>
+    </div>
+
+    <!-- ISA Settings -->
+    <div class="isa-banner">
       <div style="font-size:12px;color:var(--muted);line-height:1.6">
-        Invest up to <strong style="color:#94a3b8">£20,000/year</strong> tax-free. Projection uses S&amp;P 500 historical avg of <strong style="color:var(--green)">~10.43% p.a.</strong> nominal.
+        Invest up to <strong style="color:#94a3b8">£20,000/year</strong> tax-free. Long-term projection uses S&amp;P 500 historical avg of <strong style="color:var(--green)">~10.43% p.a.</strong> nominal.
       </div>
     </div>
     <div class="card">
-      <div class="section-title">ISA Settings</div>
+      <div class="section-title">ISA Projection Settings</div>
       <div class="input-group">
         <label class="input-label">Monthly ISA contribution</label>
         <div class="input-wrap"><span class="prefix">£</span>
@@ -438,7 +493,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
         <tbody id="proj-tbody"></tbody>
       </table>
     </div>
-    <div class="disclaimer">⚠ <strong style="color:var(--muted)">Disclaimer:</strong> Projections use S&P 500 historical average returns (~10.43% nominal). Actual returns vary and can be negative. This is not financial advice. Always consult a qualified financial adviser before investing.</div>
+    <div class="disclaimer">⚠ <strong style="color:var(--muted)">Disclaimer:</strong> Live data is sourced from Yahoo Finance and may be delayed. Projections use S&P 500 historical average returns (~10.43% nominal). Actual returns vary and can be negative. This is not financial advice. Always consult a qualified financial adviser before investing.</div>
   </div>
 
   <!-- ═══ SETTINGS ═══ -->
@@ -615,6 +670,8 @@ async function loadAllData(){
       set('income', sets.income); set('savings', sets.savings); set('isa', sets.isa);
       set('spend-budget', sets.spend_budget); set('sav-current', sets.sav_current);
       set('sav-rate-input', sets.sav_rate);
+      set('portfolio-invested', sets.portfolio_invested);
+      set('portfolio-entry', sets.portfolio_entry);
       if(sets.isa_years) document.getElementById('isa-years').value=sets.isa_years;
     }
 
@@ -651,6 +708,8 @@ async function saveSettings(){
       isa_years: parseInt(document.getElementById('isa-years').value)||10,
       spend_budget: v('spend-budget'), sav_current: v('sav-current'),
       sav_rate: v('sav-rate-input')||4.5,
+      portfolio_invested: v('portfolio-invested'),
+      portfolio_entry: v('portfolio-entry'),
       updated_at: new Date().toISOString()
     });
     setSyncStatus('synced');
@@ -704,6 +763,7 @@ function showTab(name,btn){
   document.getElementById('page-'+name).classList.add('active');
   updateAll();
   if(name==='settings') updateSummary();
+  if(name==='isa') fetchSP500();
 }
 
 // ── Bills ──────────────────────────────────────────────────────────────────
@@ -1143,6 +1203,73 @@ async function importData(event){
   };
   reader.readAsText(file);
   event.target.value='';
+}
+
+// ── S&P 500 Live Data ──────────────────────────────────────────────────────
+let spLivePrice = null;
+
+async function fetchSP500(){
+  const btn = document.getElementById('sp-refresh-btn');
+  const priceEl = document.getElementById('sp-price');
+  const changeEl = document.getElementById('sp-change');
+  const pctEl = document.getElementById('sp-pct');
+  const rangeEl = document.getElementById('sp-range');
+  const updatedEl = document.getElementById('sp-updated');
+  if(btn) btn.textContent = '⏳ Loading…';
+  if(priceEl) priceEl.textContent = '…';
+  try {
+    // Use a CORS proxy to hit Yahoo Finance
+    const proxy = 'https://corsproxy.io/?';
+    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=1d&range=1d';
+    const res = await fetch(proxy + encodeURIComponent(url));
+    const json = await res.json();
+    const meta = json.chart.result[0].meta;
+    const price = meta.regularMarketPrice;
+    const prev = meta.chartPreviousClose || meta.previousClose;
+    const change = price - prev;
+    const pct = (change / prev) * 100;
+    const low52 = meta.fiftyTwoWeekLow;
+    const high52 = meta.fiftyTwoWeekHigh;
+    spLivePrice = price;
+
+    priceEl.textContent = price.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const up = change >= 0;
+    changeEl.textContent = (up?'+':'')+change.toFixed(2);
+    changeEl.style.color = up ? 'var(--green)' : 'var(--red)';
+    pctEl.textContent = (up?'+':'')+pct.toFixed(2)+'%';
+    pctEl.style.color = up ? 'var(--green)' : 'var(--red)';
+    rangeEl.textContent = low52 ? `${low52.toLocaleString()} – ${high52.toLocaleString()}` : '—';
+    updatedEl.textContent = 'Last updated: ' + new Date().toLocaleTimeString('en-GB') + ' · 15min delay · USD';
+    if(btn) btn.textContent = '↻ Refresh';
+    updatePortfolio();
+  } catch(e) {
+    if(priceEl) priceEl.textContent = 'Unavailable';
+    if(updatedEl) updatedEl.textContent = 'Could not load data — try refreshing';
+    if(btn) btn.textContent = '↻ Retry';
+  }
+}
+
+// ── Portfolio Calculator ────────────────────────────────────────────────────
+function updatePortfolio(){
+  const invested = v('portfolio-invested');
+  const entry = v('portfolio-entry');
+  const current = spLivePrice;
+  document.getElementById('port-invested-display').textContent = gbp(invested);
+  if(!invested || !entry || !current){
+    document.getElementById('port-current').textContent = '—';
+    document.getElementById('port-gain').textContent = entry && !current ? 'Load live price first' : '—';
+    document.getElementById('port-gain').style.color = 'var(--muted)';
+    return;
+  }
+  const growthRatio = current / entry;
+  const currentValue = invested * growthRatio;
+  const gain = currentValue - invested;
+  const gainPct = ((gain / invested) * 100).toFixed(1);
+  const up = gain >= 0;
+  document.getElementById('port-current').textContent = gbp(currentValue);
+  document.getElementById('port-current').style.color = up ? 'var(--green)' : 'var(--red)';
+  document.getElementById('port-gain').textContent = (up?'+':'')+gbp(gain)+' ('+gainPct+'%)';
+  document.getElementById('port-gain').style.color = up ? 'var(--green)' : 'var(--red)';
 }
 
 // ── Export ─────────────────────────────────────────────────────────────────
