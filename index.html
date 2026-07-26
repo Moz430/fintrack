@@ -315,10 +315,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div id="daily-budget-label" style="font-size:10px;color:var(--muted);margin-top:5px"></div>
     </div>
     <div id="spend-rows-list"></div>
-    <button class="btn-add" onclick="addSpendRow()">+ Add Spend</button>
     <div class="card" id="spend-cats-card" style="display:none;margin-top:14px">
       <div class="section-title">By Category</div><div id="spend-cats"></div>
     </div>
+    <button class="btn-add" onclick="addSpendRow()">+ Add Spend</button>
     <div id="spend-history-wrap">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;margin-top:14px">
         <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--dim)">Recent Spends</div>
@@ -334,11 +334,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div><div class="section-title" style="margin-bottom:2px">Outgoing Bills</div><div style="font-size:11px;color:var(--muted)">Fixed monthly expenses</div></div>
       <div style="text-align:right"><div class="card-label">Total</div><div id="bills-total-display" class="stat-number" style="color:var(--red)">£0.00</div></div>
     </div>
-    <div id="bills-list"></div>
-    <button class="btn-add" onclick="addBill()">+ Add Bill</button>
-    <div class="card" id="category-card" style="margin-top:16px;display:none">
+    <div class="card" id="category-card" style="margin-bottom:14px;display:none">
       <div class="section-title">By Category</div><div id="category-breakdown"></div>
     </div>
+    <div id="bills-list"></div>
+    <button class="btn-add" onclick="addBill()">+ Add Bill</button>
   </div>
 
   <!-- ═══ SAVINGS ═══ -->
