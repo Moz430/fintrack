@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="FinTrack"/>
 <title>FinTrack</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-stretch:normal}
@@ -16,12 +16,12 @@
   --green:#22d3a0;--blue:#60a5fa;--red:#ef4444;--yellow:#f5a623;--purple:#a78bfa;--orange:#fb923c;
   --text:#e2e8f0;--muted:#64748b;--dim:#334155;
 }
-html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--green);border-radius:2px}
 
 /* ── AUTH INPUTS — Calibri / system font ── */
 .auth-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;
-  padding:12px 14px;color:var(--text);font-family:Calibri,'Trebuchet MS','Gill Sans',sans-serif;
+  padding:12px 14px;color:var(--text);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;
   font-size:15px;outline:none;transition:border-color .2s;-webkit-appearance:none}
 .auth-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,211,160,.08)}
 .auth-input::placeholder{color:var(--dim)}
@@ -29,16 +29,16 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
   min-height:100vh;padding:24px;background:var(--bg)}
 .auth-card{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--border);
   border-radius:20px;padding:32px;position:relative;overflow:hidden;
-  font-family:Calibri,'Trebuchet MS','Gill Sans',sans-serif}
+  font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif}
 .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,var(--green),var(--blue))}
-.auth-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;text-align:center;margin-bottom:6px;
+.auth-logo{font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:28px;font-weight:800;text-align:center;margin-bottom:6px;
   background:linear-gradient(90deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .auth-sub{font-size:11px;color:var(--muted);text-align:center;letter-spacing:1px;margin-bottom:28px}
 .auth-tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:24px}
-.auth-card .input-label{font-family:Calibri,'Trebuchet MS','Gill Sans',sans-serif;font-size:13px;letter-spacing:0;text-transform:none;color:var(--muted)}
+.auth-card .input-label{font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:13px;letter-spacing:0;text-transform:none;color:var(--muted)}
 .auth-tab{flex:1;padding:8px;border:none;border-radius:8px;background:transparent;
-  color:var(--muted);font-family:Calibri,'Trebuchet MS','Gill Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+  color:var(--muted);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
 .auth-tab.active{background:var(--surface);color:var(--green);border:1px solid var(--border)}
 .auth-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;
   padding:10px 12px;font-size:12px;color:var(--red);margin-bottom:14px;display:none}
@@ -46,7 +46,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
   padding:10px 12px;font-size:12px;color:var(--green);margin-bottom:14px;display:none}
 .auth-btn{width:100%;padding:13px;border:none;border-radius:10px;
   background:linear-gradient(135deg,var(--green),#0ea5e9);color:#0b0f1a;
-  font-family:Calibri,'Trebuchet MS','Gill Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;
+  font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:600;cursor:pointer;
   letter-spacing:.3px;margin-top:6px;transition:opacity .2s}
 .auth-btn:disabled{opacity:.5;cursor:not-allowed}
 .auth-divider{text-align:center;font-size:12px;color:var(--dim);margin:16px 0}
@@ -56,7 +56,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
   padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top));
   position:sticky;top:0;z-index:100}
 .header-top{display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;
+.logo{font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:20px;font-weight:800;
   background:linear-gradient(90deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-sub{font-size:10px;color:var(--dim);letter-spacing:1px;margin-top:2px}
 .sync-indicator{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted)}
@@ -70,8 +70,8 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
   position:sticky;top:60px;z-index:99;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex:1;min-width:60px;padding:11px 4px;border:none;border-bottom:2px solid transparent;
-  background:transparent;color:var(--muted);font-family:'DM Mono',monospace;
-  font-size:9px;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}
+  background:transparent;color:var(--muted);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;
+  font-size:11px;letter-spacing:.3px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}
 .tab.active{color:var(--green);border-bottom-color:var(--green)}
 
 /* ── MAIN ── */
@@ -82,23 +82,23 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
   padding:18px;position:relative;overflow:hidden;margin-bottom:14px}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,var(--green),var(--blue),transparent)}
-.card-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.card-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
 
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 
 /* ── INPUTS ── */
 .input-group{margin-bottom:14px}
-.input-label{display:block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.input-label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
 .input-wrap{position:relative}
 .prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--green);font-size:14px}
 .fin-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;
-  padding:11px 12px 11px 28px;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;
+  padding:11px 12px 11px 28px;color:var(--text);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:14px;
   outline:none;transition:border-color .2s;-webkit-appearance:none}
 .fin-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,211,160,.08)}
 .fin-input.no-prefix{padding-left:12px}
 .fin-select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;
-  padding:11px 12px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;
+  padding:11px 12px;color:var(--text);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:12px;
   outline:none;cursor:pointer;-webkit-appearance:none;appearance:none}
 
 /* ── BARS ── */
@@ -112,7 +112,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
 
 /* ── BUTTONS ── */
 .btn-add{width:100%;padding:12px;border:1px dashed var(--border);border-radius:10px;
-  background:transparent;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;
+  background:transparent;color:var(--muted);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:11px;
   letter-spacing:1px;cursor:pointer;transition:all .2s;margin-top:4px}
 .btn-add:active{background:rgba(34,211,160,.05);border-color:var(--green);color:var(--green)}
 .btn-remove{width:36px;height:36px;border:1px solid var(--border);border-radius:8px;
@@ -129,15 +129,15 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
 .pill-orange{background:rgba(251,146,60,.12);color:var(--orange)}
 
 /* ── TYPOGRAPHY ── */
-.section-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;color:#f1f5f9}
-.big-number{font-family:'Inter',sans-serif;font-size:32px;font-weight:800;line-height:1.1;margin-bottom:6px;letter-spacing:-1px}
+.section-title{font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;color:#f1f5f9}
+.big-number{font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:32px;font-weight:800;line-height:1.1;margin-bottom:6px;letter-spacing:-1px}
 .big-number-sub{font-size:11px;color:var(--muted);line-height:1.5}
-.stat-number{font-family:'Inter',sans-serif;font-size:18px;font-weight:700;line-height:1.2;margin-top:4px}
+.stat-number{font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:18px;font-weight:700;line-height:1.2;margin-top:4px}
 
 /* ── MISC ── */
 .mini-stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px}
 .stat-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:8px 0;border-bottom:1px solid #0f172a}
-.section-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;color:#f1f5f9}
+.section-title{font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;color:#f1f5f9}
 .warn{font-size:10px;color:var(--yellow);margin-top:5px}
 .disclaimer{font-size:10px;color:var(--dim);line-height:1.7;padding:12px 14px;background:#0f172a;border:1px solid var(--border);border-radius:10px;margin-top:14px}
 .health-wrap{display:flex;align-items:center;gap:16px;margin-bottom:16px}
@@ -156,7 +156,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .spend-info{flex:1;min-width:0}
 .spend-name{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .spend-meta{font-size:10px;color:var(--muted);margin-top:2px}
-.spend-amount{font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:var(--orange);flex-shrink:0}
+.spend-amount{font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700;color:var(--orange);flex-shrink:0}
 .day-group-title{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);padding:6px 0 4px;margin-top:8px;border-top:1px solid var(--border)}
 
 /* ── PAGES ── */
@@ -241,7 +241,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
           <span id="sync-label">Synced</span>
         </div>
         <button onclick="signOut()" style="background:none;border:1px solid var(--border);border-radius:8px;
-          color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;padding:5px 10px;cursor:pointer">Sign out</button>
+          color:var(--muted);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:10px;padding:5px 10px;cursor:pointer">Sign out</button>
       </div>
     </div>
   </div>
@@ -282,10 +282,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
             stroke-dasharray="0 207.3" stroke-linecap="round" transform="rotate(-90 40 40)"
             style="transition:stroke-dasharray .8s ease,stroke .4s"/>
           <text id="health-score-text" x="40" y="45" text-anchor="middle" fill="var(--green)"
-            font-size="16" font-weight="700" font-family="Inter">0</text>
+            font-size="16" font-weight="700" font-family="Calibri">0</text>
         </svg>
         <div>
-          <div id="health-label" style="font-family:Syne;font-size:18px;font-weight:700;color:var(--green)">—</div>
+          <div id="health-label" style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:18px;font-weight:700;color:var(--green)">—</div>
           <div id="health-desc" style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Enter your income to get started.</div>
         </div>
       </div>
@@ -322,7 +322,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div id="spend-history-wrap">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;margin-top:14px">
         <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--dim)">Recent Spends</div>
-        <button onclick="clearOldSpends()" style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;padding:5px 10px;cursor:pointer">Clear old</button>
+        <button onclick="clearOldSpends()" style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:10px;padding:5px 10px;cursor:pointer">Clear old</button>
       </div>
       <div id="spend-list"></div>
     </div>
@@ -447,28 +447,28 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(34,211,160,.12);display:flex;align-items:center;justify-content:center;font-size:20px">👤</div>
-        <div><div style="font-family:Syne;font-size:15px;font-weight:700">Signed in</div><div id="settings-email" style="font-size:11px;color:var(--muted);margin-top:2px"></div></div>
+        <div><div style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700">Signed in</div><div id="settings-email" style="font-size:11px;color:var(--muted);margin-top:2px"></div></div>
       </div>
-      <button onclick="signOut()" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer">Sign Out</button>
+      <button onclick="signOut()" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--muted);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:12px;cursor:pointer">Sign Out</button>
     </div>
     <div class="card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(34,211,160,.12);display:flex;align-items:center;justify-content:center;font-size:20px">💾</div>
-        <div><div style="font-family:Syne;font-size:15px;font-weight:700">Export Backup</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Download all data as a file</div></div>
+        <div><div style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700">Export Backup</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Download all data as a file</div></div>
       </div>
-      <button onclick="exportData()" style="width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--green),#0ea5e9);color:#0b0f1a;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;cursor:pointer">↓ Export Backup File</button>
+      <button onclick="exportData()" style="width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--green),#0ea5e9);color:#0b0f1a;font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:13px;font-weight:500;cursor:pointer">↓ Export Backup File</button>
     </div>
 
     <div class="card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(96,165,250,.12);display:flex;align-items:center;justify-content:center;font-size:20px">📂</div>
-        <div><div style="font-family:Syne;font-size:15px;font-weight:700">Restore from Backup</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Load a previously exported file</div></div>
+        <div><div style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700">Restore from Backup</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Load a previously exported file</div></div>
       </div>
       <div style="font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6">
         Select a <strong style="color:var(--muted)">fintrack-backup.json</strong> file. This will overwrite your current data — export first if needed.
       </div>
       <label style="display:block;width:100%;padding:13px;border:1px solid var(--blue);border-radius:10px;
-        background:rgba(96,165,250,.08);color:var(--blue);font-family:'DM Mono',monospace;
+        background:rgba(96,165,250,.08);color:var(--blue);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;
         font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.5px;text-align:center">
         ↑ Choose Backup File
         <input type="file" accept=".json" onchange="importData(event)" style="display:none"/>
@@ -478,16 +478,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(96,165,250,.12);display:flex;align-items:center;justify-content:center;font-size:20px">📋</div>
-        <div><div style="font-family:Syne;font-size:15px;font-weight:700">What's Saved</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Current data summary</div></div>
+        <div><div style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700">What's Saved</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Current data summary</div></div>
       </div>
       <div id="data-summary"></div>
     </div>
     <div class="card" style="border-color:rgba(239,68,68,.2)">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(239,68,68,.12);display:flex;align-items:center;justify-content:center;font-size:20px">🗑</div>
-        <div><div style="font-family:Syne;font-size:15px;font-weight:700;color:var(--red)">Clear All Data</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Cannot be undone</div></div>
+        <div><div style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700;color:var(--red)">Clear All Data</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Cannot be undone</div></div>
       </div>
-      <button onclick="clearAllData()" style="width:100%;padding:13px;border:1px solid var(--red);border-radius:10px;background:rgba(239,68,68,.08);color:var(--red);font-family:'DM Mono',monospace;font-size:13px;font-weight:500;cursor:pointer">Clear Everything</button>
+      <button onclick="clearAllData()" style="width:100%;padding:13px;border:1px solid var(--red);border-radius:10px;background:rgba(239,68,68,.08);color:var(--red);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:13px;font-weight:500;cursor:pointer">Clear Everything</button>
     </div>
   </div>
 
@@ -977,7 +977,7 @@ function updateAll(){
   document.getElementById('ov-spend-summary').innerHTML=spent>0?
     `<div style="display:flex;justify-content:space-between;margin-bottom:10px">
       <span style="color:var(--muted);font-size:12px">Total spent this month</span>
-      <span style="color:var(--orange);font-family:Inter;font-size:16px;font-weight:700">${gbp(spent)}</span>
+      <span style="color:var(--orange);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:16px;font-weight:700">${gbp(spent)}</span>
     </div>`+
     (spendBudget?`<div class="bar-track" style="height:6px;margin-bottom:8px"><div class="bar-fill" style="width:${clamp((spent/spendBudget)*100,0,100)}%;background:${spent>spendBudget?'var(--red)':'var(--orange)'}"></div></div>
     <div style="font-size:10px;color:var(--muted)">${spent>spendBudget?'⚠ Over budget by '+gbp(spent-spendBudget):'£'+((spendBudget-spent).toFixed(2))+' left of £'+spendBudget.toFixed(2)+' budget'}</div>`:''):
