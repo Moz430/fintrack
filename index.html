@@ -314,18 +314,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="bar-track" style="height:8px"><div id="daily-budget-bar" class="bar-fill" style="width:0%;background:var(--orange)"></div></div>
       <div id="daily-budget-label" style="font-size:10px;color:var(--muted);margin-top:5px"></div>
     </div>
-    <div id="spend-rows-list"></div>
-    <div class="card" id="spend-cats-card" style="display:none;margin-top:14px">
+
+    <div class="card" id="spend-cats-card" style="display:none">
       <div class="section-title">By Category</div><div id="spend-cats"></div>
     </div>
-    <button class="btn-add" onclick="addSpendRow()">+ Add Spend</button>
+
     <div id="spend-history-wrap">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;margin-top:14px">
-        <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--dim)">Recent Spends</div>
-        <button onclick="clearOldSpends()" style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:10px;padding:5px 10px;cursor:pointer">Clear old</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--dim)">This Month</div>
+        <button onclick="clearOldSpends()" style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:10px;padding:5px 10px;cursor:pointer">Clear old</button>
       </div>
       <div id="spend-list"></div>
     </div>
+
+    <button class="btn-add" onclick="addSpend()">+ Add Spend</button>
   </div>
 
   <!-- ═══ BILLS ═══ -->
@@ -337,8 +339,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="card" id="category-card" style="margin-bottom:14px;display:none">
       <div class="section-title">By Category</div><div id="category-breakdown"></div>
     </div>
-    <button class="btn-add" onclick="addBill()">+ Add Bill</button>
     <div id="bills-list"></div>
+    <button class="btn-add" onclick="addBill()">+ Add Bill</button>
   </div>
 
   <!-- ═══ SAVINGS ═══ -->
@@ -565,8 +567,6 @@ const CAT_COLORS = {'Groceries':'#22d3a0','Eating Out':'#fb923c','Coffee':'#f59e
 let currentUser = null;
 let bills = [];
 let spends = [];
-let pendingSpends = [];
-let nextPendingId = 1;
 let saveTimer = null;
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -813,70 +813,47 @@ function renderBills(){
 }
 
 // ── Daily Spends ───────────────────────────────────────────────────────────
-function addSpendRow(){
-  pendingSpends.push({pid:nextPendingId++, name:'', category:'Groceries', amount:''});
-  renderSpendRows();
-}
-
-function removePendingSpend(pid){
-  pendingSpends=pendingSpends.filter(p=>p.pid!==pid);
-  renderSpendRows();
-}
-
-function updatePendingField(pid,field,val){
-  const p=pendingSpends.find(x=>x.pid===pid);
-  if(p) p[field]=val;
-}
-
-function updatePending(pid,field,val){
-  const p=pendingSpends.find(x=>x.pid===pid);
-  if(p) p[field]=val;
-}
-
-function commitIfReady(pid){
-  const p=pendingSpends.find(x=>x.pid===pid);
-  if(p && parseFloat(p.amount)>0) commitPending(pid);
-}
-
-async function commitPending(pid){
-  const p=pendingSpends.find(x=>x.pid===pid);
-  if(!p||!p.amount||parseFloat(p.amount)<=0) return;
-  const spend={id:null,name:p.name||p.category,category:p.category,amount:parseFloat(p.amount),date:today()};
+function addSpend(){
+  const spend={id:'new_'+Date.now(),name:'',category:'Groceries',amount:'',date:today(),_unsaved:true};
   spends.unshift(spend);
-  pendingSpends=pendingSpends.filter(x=>x.pid!==pid);
-  renderSpendRows();
   renderSpends();
-  updateAll();
-  await saveSpend(spend);
+  setTimeout(()=>{ const el=document.getElementById(`spend-name-${spend.id}`); if(el) el.focus(); },50);
 }
 
-function renderSpendRows(){
-  const el=document.getElementById('spend-rows-list');
-  el.innerHTML=pendingSpends.map(p=>`
-    <div class="bill-row">
-      <div class="bill-row-grid">
-        <input class="fin-input no-prefix" placeholder="e.g. Tesco" value="${p.name||''}"
-          oninput="updatePendingField(${p.pid},'name',this.value)" style="font-size:13px;padding:9px 10px"/>
-        <select class="fin-select" onchange="updatePendingField(${p.pid},'category',this.value)">
-          ${SPEND_CATS.map(c=>`<option${c===p.category?' selected':''}>${c}</option>`).join('')}
-        </select>
-      </div>
-      <div class="bill-row-bottom">
-        <div class="input-wrap"><span class="prefix">£</span>
-          <input class="fin-input" type="number" inputmode="decimal" placeholder="0.00" value="${p.amount||''}"
-            oninput="updatePending(${p.pid},'amount',this.value)"
-            onblur="commitIfReady(${p.pid})"
-            onkeydown="if(event.key==='Enter'){this.blur()}"/>
-        </div>
-        <button class="btn-remove" onclick="removePendingSpend(${p.pid})">×</button>
-      </div>
-    </div>`).join('');
+function updateSpendField(id,field,val){
+  const s=spends.find(x=>x.id===id);
+  if(s) s[field]=val;
+}
+
+async function saveSpendOnBlur(id){
+  const s=spends.find(x=>x.id===id);
+  if(!s) return;
+  const nameEl=document.getElementById(`spend-name-${id}`);
+  const catEl=document.getElementById(`spend-cat-${id}`);
+  const amtEl=document.getElementById(`spend-amt-${id}`);
+  if(nameEl) s.name=nameEl.value.trim()||s.category;
+  if(catEl)  s.category=catEl.value;
+  if(amtEl)  s.amount=parseFloat(amtEl.value)||0;
+  if(!s.amount) return;
+  updateAll();
+  setSyncStatus('syncing');
+  try {
+    if(s._unsaved){
+      const {data}=await sb.from('spends').insert({
+        user_id:currentUser.id,name:s.name,category:s.category,amount:s.amount,date:s.date
+      }).select().single();
+      if(data){ s.id=data.id; delete s._unsaved; }
+    } else {
+      await sb.from('spends').update({name:s.name,category:s.category,amount:s.amount}).eq('id',id);
+    }
+    setSyncStatus('synced');
+  } catch(e){ setSyncStatus('error'); }
 }
 
 async function removeSpend(id){
   spends=spends.filter(s=>s.id!==id);
   renderSpends(); updateAll();
-  await deleteSpend(id);
+  if(!String(id).startsWith('new_')) await deleteSpend(id);
 }
 
 async function clearOldSpends(){
@@ -884,13 +861,11 @@ async function clearOldSpends(){
   const old=spends.filter(s=>!s.date.startsWith(m));
   spends=spends.filter(s=>s.date.startsWith(m));
   renderSpends(); updateAll();
-  for(const s of old) await deleteSpend(s.id);
+  for(const s of old) if(!String(s.id).startsWith('new_')) await deleteSpend(s.id);
 }
 
 function currentMonthSpends(){ const m=new Date().toISOString().slice(0,7); return spends.filter(s=>s.date&&s.date.startsWith(m)); }
-function monthTotal(){ return currentMonthSpends().reduce((a,s)=>a+(s.amount||0),0); }
-
-let editingSpendId = null;
+function monthTotal(){ return currentMonthSpends().reduce((a,s)=>a+(parseFloat(s.amount)||0),0); }
 
 function renderSpends(){
   const list=document.getElementById('spend-list');
@@ -901,46 +876,34 @@ function renderSpends(){
 
   list.innerHTML=sortedDates.length?sortedDates.map(date=>{
     const ds=groups[date];
-    const dt=ds.reduce((a,s)=>a+s.amount,0);
+    const dt=ds.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
     return `<div class="day-group-title">${fmtDate(date)} · <span style="color:var(--orange)">${gbp(dt)}</span></div>`+
-      ds.map(s=>{
-        if(editingSpendId===s.id){
-          // ── Edit mode ──
-          return `<div class="bill-row" style="border-color:var(--orange)">
-            <div class="bill-row-grid">
-              <input class="fin-input no-prefix" id="edit-name-${s.id}" value="${s.name||''}"
-                style="font-size:13px;padding:9px 10px" placeholder="Description"/>
-              <select class="fin-select" id="edit-cat-${s.id}">
-                ${SPEND_CATS.map(c=>`<option${c===s.category?' selected':''}>${c}</option>`).join('')}
-              </select>
+      ds.map(s=>`
+        <div class="bill-row" style="${s._unsaved?'border-color:var(--orange)':''}">
+          <div class="bill-row-grid">
+            <input class="fin-input no-prefix" id="spend-name-${s.id}" placeholder="e.g. Tesco"
+              value="${s.name||''}" style="font-size:13px;padding:9px 10px"
+              oninput="updateSpendField('${s.id}','name',this.value)"
+              onblur="saveSpendOnBlur('${s.id}')"/>
+            <select class="fin-select" id="spend-cat-${s.id}"
+              onchange="updateSpendField('${s.id}','category',this.value);saveSpendOnBlur('${s.id}')">
+              ${SPEND_CATS.map(c=>`<option${c===s.category?' selected':''}>${c}</option>`).join('')}
+            </select>
+          </div>
+          <div class="bill-row-bottom">
+            <div class="input-wrap"><span class="prefix">£</span>
+              <input class="fin-input" id="spend-amt-${s.id}" type="number" inputmode="decimal"
+                placeholder="0.00" value="${s.amount||''}"
+                oninput="updateSpendField('${s.id}','amount',this.value)"
+                onblur="saveSpendOnBlur('${s.id}')"/>
             </div>
-            <div class="bill-row-bottom">
-              <div class="input-wrap"><span class="prefix">£</span>
-                <input class="fin-input" id="edit-amt-${s.id}" type="number" inputmode="decimal"
-                  placeholder="0.00" value="${s.amount||''}"
-                  onkeydown="if(event.key==='Enter') saveSpendEdit('${s.id}')"/>
-              </div>
-              <div style="display:flex;gap:6px">
-                <button onclick="saveSpendEdit('${s.id}')" style="flex:1;height:36px;border:none;border-radius:8px;
-                  background:linear-gradient(135deg,var(--green),#0ea5e9);color:#0b0f1a;
-                  font-size:14px;cursor:pointer">✓</button>
-                <button onclick="cancelSpendEdit()" class="btn-remove">×</button>
-              </div>
-            </div>
-          </div>`;
-        }
-        // ── View mode ──
-        return `<div class="spend-row" onclick="startSpendEdit('${s.id}')" style="cursor:pointer">
-          <div style="width:32px;height:32px;border-radius:8px;background:${CAT_COLORS[s.category]||'#64748b'}22;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${catEmoji(s.category)}</div>
-          <div class="spend-info"><div class="spend-name">${s.name}</div><div class="spend-meta">${s.category}</div></div>
-          <div class="spend-amount">${gbp(s.amount)}</div>
-          <button class="btn-remove" onclick="event.stopPropagation();removeSpend('${s.id}')" style="margin-left:6px">×</button>
-        </div>`;
-      }).join('');
-  }).join(''):'<div style="text-align:center;padding:24px;color:var(--dim);font-size:12px">No spends this month yet</div>';
+            <button class="btn-remove" onclick="removeSpend('${s.id}')">×</button>
+          </div>
+        </div>`).join('');
+  }).join(''):'<div style="text-align:center;padding:24px;color:var(--dim);font-size:12px">No spends this month yet — tap + Add Spend</div>';
 
   const cats={};
-  thisMonth.forEach(s=>{ cats[s.category]=(cats[s.category]||0)+s.amount; });
+  thisMonth.forEach(s=>{ const a=parseFloat(s.amount)||0; if(a) cats[s.category]=(cats[s.category]||0)+a; });
   const total=monthTotal();
   const catCard=document.getElementById('spend-cats-card');
   if(Object.keys(cats).length){
@@ -954,38 +917,6 @@ function renderSpends(){
         <div class="bar-track"><div class="bar-fill" style="width:${total?(val/total*100):0}%;background:${CAT_COLORS[cat]||'var(--orange)'}"></div></div>
       </div>`).join('');
   } else catCard.style.display='none';
-}
-
-function startSpendEdit(id){
-  editingSpendId = id;
-  renderSpends();
-  // focus amount after render
-  setTimeout(()=>{ const el=document.getElementById(`edit-amt-${id}`); if(el) el.focus(); },50);
-}
-
-function cancelSpendEdit(){
-  editingSpendId = null;
-  renderSpends();
-}
-
-async function saveSpendEdit(id){
-  const s = spends.find(x=>x.id===id);
-  if(!s) return;
-  const name = document.getElementById(`edit-name-${id}`)?.value.trim();
-  const cat  = document.getElementById(`edit-cat-${id}`)?.value;
-  const amt  = parseFloat(document.getElementById(`edit-amt-${id}`)?.value)||0;
-  if(!amt) return;
-  s.name = name||cat;
-  s.category = cat;
-  s.amount = amt;
-  editingSpendId = null;
-  renderSpends();
-  updateAll();
-  setSyncStatus('syncing');
-  try {
-    await sb.from('spends').update({name:s.name,category:s.category,amount:s.amount}).eq('id',id);
-    setSyncStatus('synced');
-  } catch(e){ setSyncStatus('error'); }
 }
 
 function catEmoji(cat){
