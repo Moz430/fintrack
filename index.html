@@ -159,7 +159,34 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .spend-amount{font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700;color:var(--orange);flex-shrink:0}
 .day-group-title{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);padding:6px 0 4px;margin-top:8px;border-top:1px solid var(--border)}
 
-/* ── PAGES ── */
+/* ── ONBOARDING ── */
+.onboard-screen{display:none;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:24px;background:var(--bg)}
+.onboard-screen.visible{display:flex}
+.onboard-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:32px;position:relative;overflow:hidden}
+.onboard-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--green),var(--blue))}
+.onboard-steps{display:flex;gap:6px;margin-bottom:28px}
+.onboard-step{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .3s}
+.onboard-step.done{background:var(--green)}
+.onboard-step.active{background:linear-gradient(90deg,var(--green),var(--blue))}
+.onboard-emoji{font-size:40px;text-align:center;margin-bottom:12px}
+.onboard-title{font-family:Calibri,'Trebuchet MS',sans-serif;font-size:22px;font-weight:700;
+  text-align:center;margin-bottom:6px;color:var(--text)}
+.onboard-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:24px;line-height:1.5}
+.onboard-btn{width:100%;padding:14px;border:none;border-radius:10px;margin-top:8px;
+  background:linear-gradient(135deg,var(--green),#0ea5e9);color:#0b0f1a;
+  font-family:Calibri,'Trebuchet MS',sans-serif;font-size:15px;font-weight:600;cursor:pointer}
+.onboard-skip{width:100%;padding:10px;border:none;background:none;color:var(--dim);
+  font-family:Calibri,'Trebuchet MS',sans-serif;font-size:13px;cursor:pointer;margin-top:4px}
+
+/* ── INSIGHTS ── */
+.insight-card{background:linear-gradient(135deg,#0d1f2d,#0d2a1f);border:1px solid rgba(96,165,250,.2);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px}
+.insight-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.insight-text{font-size:13px;color:var(--text);line-height:1.5}
+.insight-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
 .app-wrapper{display:none}.app-wrapper.visible{display:block}
 .auth-screen{display:none}.auth-screen.visible{display:flex}
 .page{display:none}.page.active{display:block;animation:fadeUp .25s ease}
@@ -227,6 +254,74 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
+<!-- ── ONBOARDING ── -->
+<div id="onboard-screen" class="onboard-screen">
+  <div class="onboard-card">
+    <div class="onboard-steps">
+      <div class="onboard-step active" id="os1"></div>
+      <div class="onboard-step" id="os2"></div>
+      <div class="onboard-step" id="os3"></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div id="onboard-1">
+      <div class="onboard-emoji">👋</div>
+      <div class="onboard-title">Welcome to FinTrack</div>
+      <div class="onboard-sub">Let's get you set up in 3 quick steps so your dashboard is ready to go.</div>
+      <div class="input-group">
+        <label class="input-label">What's your monthly take-home pay?</label>
+        <div class="input-wrap"><span class="prefix">£</span>
+          <input class="fin-input" id="ob-income" type="number" inputmode="decimal" placeholder="3,500.00"/>
+        </div>
+      </div>
+      <div class="input-group" style="margin-bottom:0">
+        <label class="input-label">Monthly spend budget (optional)</label>
+        <div class="input-wrap"><span class="prefix">£</span>
+          <input class="fin-input" id="ob-budget" type="number" inputmode="decimal" placeholder="400.00"/>
+        </div>
+      </div>
+      <button class="onboard-btn" onclick="obNext(2)">Continue →</button>
+      <button class="onboard-skip" onclick="skipOnboard()">Skip setup</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="onboard-2" style="display:none">
+      <div class="onboard-emoji">🏦</div>
+      <div class="onboard-title">Your Savings</div>
+      <div class="onboard-sub">Tell us about your savings so we can project your future wealth.</div>
+      <div class="input-group">
+        <label class="input-label">Current savings balance</label>
+        <div class="input-wrap"><span class="prefix">£</span>
+          <input class="fin-input" id="ob-sav-current" type="number" inputmode="decimal" placeholder="5,000.00"/>
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Monthly savings contribution</label>
+        <div class="input-wrap"><span class="prefix">£</span>
+          <input class="fin-input" id="ob-savings" type="number" inputmode="decimal" placeholder="300.00"/>
+        </div>
+      </div>
+      <div class="input-group" style="margin-bottom:0">
+        <label class="input-label">Monthly Stocks & Shares ISA (optional)</label>
+        <div class="input-wrap"><span class="prefix">£</span>
+          <input class="fin-input" id="ob-isa" type="number" inputmode="decimal" placeholder="200.00"/>
+        </div>
+      </div>
+      <button class="onboard-btn" onclick="obNext(3)">Continue →</button>
+      <button class="onboard-skip" onclick="obNext(1)" style="color:var(--muted);background:none;border:none;width:100%;padding:10px;cursor:pointer;font-size:13px">← Back</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="onboard-3" style="display:none">
+      <div class="onboard-emoji">🎉</div>
+      <div class="onboard-title">You're all set!</div>
+      <div class="onboard-sub">Here's a snapshot of your finances based on what you've told us.</div>
+      <div id="ob-summary" style="margin-bottom:20px"></div>
+      <button class="onboard-btn" onclick="finishOnboard()">Go to my dashboard</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── APP ── -->
 <div id="app-wrapper" class="app-wrapper">
   <div class="header">
@@ -272,6 +367,24 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="card" style="margin-bottom:0"><div class="card-label">Disposable</div><div class="stat-number" id="ov-disp">£0</div></div>
     </div>
     <div class="card"><div class="section-title">Budget Breakdown</div><div id="breakdown-bars"></div></div>
+
+    <!-- Net Worth -->
+    <div class="card" style="background:linear-gradient(135deg,#0a1628,#0d2a1f);border-color:rgba(96,165,250,.2)">
+      <div class="card-label">Your Net Worth</div>
+      <div id="net-worth-value" class="big-number" style="color:var(--blue)">£0</div>
+      <div id="net-worth-sub" class="big-number-sub"></div>
+      <div class="grid2" style="margin-top:14px">
+        <div class="mini-stat"><div class="card-label">Savings pot</div><div id="nw-savings" class="stat-number" style="color:var(--blue)">£0</div></div>
+        <div class="mini-stat"><div class="card-label">ISA (projected)</div><div id="nw-isa" class="stat-number" style="color:var(--green)">£0</div></div>
+      </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="card">
+      <div class="section-title">💡 Insights</div>
+      <div id="insights-list"></div>
+    </div>
+
     <div class="card"><div class="section-title">This Month's Spending</div><div id="ov-spend-summary"></div></div>
     <div class="card">
       <div class="section-title">Financial Health</div>
@@ -586,6 +699,125 @@ function setSyncStatus(status){
   label.textContent = status==='syncing'?'Saving…':status==='error'?'Sync error':'Synced';
 }
 
+// ── Onboarding ─────────────────────────────────────────────────────────────
+function showOnboard(){
+  document.getElementById('loading-screen').style.display='none';
+  document.getElementById('auth-screen').className='auth-screen';
+  document.getElementById('onboard-screen').className='onboard-screen visible';
+  document.getElementById('app-wrapper').className='app-wrapper';
+}
+
+function obNext(step){
+  // Save step 1 values into main inputs before moving on
+  if(step===2){
+    const inc=document.getElementById('ob-income').value;
+    const bud=document.getElementById('ob-budget').value;
+    if(inc) set('income',inc);
+    if(bud) set('spend-budget',bud);
+  }
+  if(step===3){
+    const sav=document.getElementById('ob-savings').value;
+    const cur=document.getElementById('ob-sav-current').value;
+    const isa=document.getElementById('ob-isa').value;
+    if(sav) set('savings',sav);
+    if(cur) set('sav-current',cur);
+    if(isa) set('isa',isa);
+    // Build summary
+    const income=v('income'), savings=v('savings'), isaV=v('isa'), savCur=v('sav-current');
+    document.getElementById('ob-summary').innerHTML=`
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${income?`<div class="insight-card"><div class="insight-icon">💰</div><div><div class="insight-label">Monthly income</div><div class="insight-text" style="color:var(--green);font-size:16px;font-weight:700">${gbp(income)}</div></div></div>`:''}
+        ${savCur?`<div class="insight-card"><div class="insight-icon">🏦</div><div><div class="insight-label">Current savings</div><div class="insight-text" style="color:var(--blue);font-size:16px;font-weight:700">${gbp(savCur)}</div></div></div>`:''}
+        ${(savings||isaV)?`<div class="insight-card"><div class="insight-icon">📈</div><div><div class="insight-label">Investing monthly</div><div class="insight-text" style="color:var(--purple);font-size:16px;font-weight:700">${gbp((savings||0)+(isaV||0))}</div></div></div>`:''}
+      </div>`;
+  }
+  // Update step indicators
+  for(let i=1;i<=3;i++){
+    const el=document.getElementById(`os${i}`);
+    if(i<step) el.className='onboard-step done';
+    else if(i===step) el.className='onboard-step active';
+    else el.className='onboard-step';
+  }
+  for(let i=1;i<=3;i++) document.getElementById(`onboard-${i}`).style.display=i===step?'block':'none';
+}
+
+async function finishOnboard(){
+  await saveSettings();
+  document.getElementById('onboard-screen').className='onboard-screen';
+  document.getElementById('app-wrapper').className='app-wrapper visible';
+  updateAll();
+}
+
+function skipOnboard(){
+  document.getElementById('onboard-screen').className='onboard-screen';
+  document.getElementById('app-wrapper').className='app-wrapper visible';
+  updateAll();
+}
+
+// ── Insights Engine ────────────────────────────────────────────────────────
+function generateInsights(){
+  const el=document.getElementById('insights-list');
+  if(!el) return;
+  const income=v('income'), totalBills=totalBillsAmt(), savings=v('savings'), isa=v('isa');
+  const spent=monthTotal(), spendBudget=v('spend-budget'), savCurrent=v('sav-current');
+  const insights=[];
+
+  if(!income){ el.innerHTML='<div style="font-size:12px;color:var(--dim);text-align:center;padding:8px">Enter your income on the Overview tab to see personalised insights.</div>'; return; }
+
+  // Bills ratio
+  const billRatio=(totalBills/income)*100;
+  if(billRatio>60) insights.push({icon:'⚠️',label:'High bills ratio',text:`Your fixed bills use ${billRatio.toFixed(0)}% of your income. The recommended maximum is 50%. Look for subscriptions or bills to cut.`,color:'var(--red)'});
+  else if(billRatio<40) insights.push({icon:'✅',label:'Healthy bills ratio',text:`Your bills are ${billRatio.toFixed(0)}% of income — well under the 50% guideline. Great job keeping costs low.`,color:'var(--green)'});
+
+  // Savings rate
+  const saveRate=((savings+isa)/income)*100;
+  if(saveRate>=20) insights.push({icon:'🏆',label:'Excellent savings rate',text:`You're saving ${saveRate.toFixed(0)}% of your income. The 50/30/20 rule recommends 20% — you're hitting it.`,color:'var(--green)'});
+  else if(saveRate>0&&saveRate<10) insights.push({icon:'💡',label:'Boost your savings',text:`You're saving ${saveRate.toFixed(0)}% of income. Try to reach 20% (${gbp(income*0.2)}/mo) for long-term financial health.`,color:'var(--yellow)'});
+  else if(saveRate===0) insights.push({icon:'💡',label:'Start saving',text:`You haven't set up any savings yet. Even ${gbp(income*0.05)}/mo (5%) adds up to ${gbp(income*0.05*12)} a year.`,color:'var(--yellow)'});
+
+  // ISA
+  if(!isa&&income>0) insights.push({icon:'📈',label:'Consider an S&P 500 ISA',text:`You're not currently using your £20,000/year tax-free ISA allowance. Even ${gbp(100)}/month invested over 20 years could grow to ${gbp(isaProjection(100,20)[20].toFixed(0))} at historical rates.`,color:'var(--blue)'});
+
+  // Spend budget
+  if(spendBudget&&spent>0){
+    const pctUsed=(spent/spendBudget)*100;
+    if(pctUsed>90&&pctUsed<100) insights.push({icon:'🔴',label:'Nearly at spend limit',text:`You've used ${pctUsed.toFixed(0)}% of your monthly spend budget with ${gbp(spendBudget-spent)} left.`,color:'var(--yellow)'});
+    else if(pctUsed>100) insights.push({icon:'🚨',label:'Over budget',text:`You're ${gbp(spent-spendBudget)} over your monthly spend budget. Consider reviewing your Daily tab.`,color:'var(--red)'});
+    else if(pctUsed<50) insights.push({icon:'👍',label:'On track with spending',text:`You've only used ${pctUsed.toFixed(0)}% of your spend budget this month. You're on track.`,color:'var(--green)'});
+  }
+
+  // Emergency fund
+  const emergencyTarget=totalBills*3;
+  if(savCurrent<emergencyTarget&&totalBills>0) insights.push({icon:'🛡️',label:'Build your emergency fund',text:`You need ${gbp(emergencyTarget)} (3 months of bills) as an emergency fund. You currently have ${gbp(savCurrent)} — ${gbp(Math.max(emergencyTarget-savCurrent,0))} to go.`,color:'var(--blue)'});
+  else if(savCurrent>=emergencyTarget&&totalBills>0) insights.push({icon:'🛡️',label:'Emergency fund secured',text:`You have ${gbp(savCurrent)} saved — enough to cover ${(savCurrent/totalBills).toFixed(1)} months of bills. Solid foundation.`,color:'var(--green)'});
+
+  if(!insights.length) insights.push({icon:'✨',label:'Looking good',text:'Keep filling in your data and personalised insights will appear here.',color:'var(--muted)'});
+
+  el.innerHTML=insights.map(i=>`
+    <div class="insight-card" style="border-color:${i.color}22">
+      <div class="insight-icon">${i.icon}</div>
+      <div><div class="insight-label" style="color:${i.color}">${i.label}</div>
+      <div class="insight-text">${i.text}</div></div>
+    </div>`).join('');
+}
+
+// ── Net Worth ──────────────────────────────────────────────────────────────
+function updateNetWorth(){
+  const savCurrent=v('sav-current');
+  const isa=v('isa');
+  const isaYears=parseInt(document.getElementById('isa-years').value)||10;
+  const isaVal=isaProjection(isa,isaYears)[isaYears]||0;
+  const netWorth=savCurrent+isaVal;
+  const el=document.getElementById('net-worth-value');
+  const sub=document.getElementById('nw-savings');
+  const isaEl=document.getElementById('nw-isa');
+  const subText=document.getElementById('net-worth-sub');
+  if(el) el.textContent=gbp(netWorth);
+  if(sub) sub.textContent=gbp(savCurrent);
+  if(isaEl) isaEl.textContent=gbp(isaVal);
+  if(subText) subText.textContent=netWorth>0?`Savings + projected ISA value in ${isaYears} years`:'Add your savings and ISA to see your net worth';
+}
+
 // ── Auth ───────────────────────────────────────────────────────────────────
 function switchAuthTab(tab, btn){
   document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
@@ -651,7 +883,6 @@ function showApp(user){
   currentUser=user;
   document.getElementById('loading-screen').style.display='none';
   document.getElementById('auth-screen').className='auth-screen';
-  document.getElementById('app-wrapper').className='app-wrapper visible';
   document.getElementById('user-email-display').textContent=user.email;
   document.getElementById('settings-email').textContent=user.email;
   loadAllData();
@@ -665,6 +896,7 @@ async function loadAllData(){
 
     // Settings
     const {data:sets} = await sb.from('settings').select('*').eq('id',uid).single();
+    const isNewUser = !sets || !sets.income;
     if(sets){
       set('income', sets.income); set('savings', sets.savings); set('isa', sets.isa);
       set('spend-budget', sets.spend_budget); set('sav-current', sets.sav_current);
@@ -686,8 +918,16 @@ async function loadAllData(){
 
     setSyncStatus('synced');
     updateAll();
+
+    // Show onboarding for new users, app for returning
+    if(isNewUser){
+      showOnboard();
+    } else {
+      document.getElementById('app-wrapper').className='app-wrapper visible';
+    }
   } catch(e){
     setSyncStatus('error');
+    document.getElementById('app-wrapper').className='app-wrapper visible';
   }
 }
 
@@ -997,6 +1237,9 @@ function updateAll(){
     <div class="stat-row"><span style="color:var(--muted)">Bills ratio</span><span class="pill ${totalBills/(income||1)>0.6?'pill-red':'pill-green'}">${income?pct(totalBills,income):'—'}</span></div>
     <div class="stat-row"><span style="color:var(--muted)">Spent vs budget</span><span class="pill ${spendBudget&&spent>spendBudget?'pill-red':'pill-orange'}">${spendBudget?pct(spent,spendBudget)+' used':'—'}</span></div>
     <div class="stat-row" style="border:none"><span style="color:var(--muted)">ISA/year</span><span class="pill pill-blue">${gbp(isa*12)}</span></div>`;
+
+  generateInsights();
+  updateNetWorth();
 
   // Daily
   document.getElementById('daily-month-total').textContent=gbp(spent);
