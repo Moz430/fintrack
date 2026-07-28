@@ -347,6 +347,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab" onclick="showTab('bills',this)">Bills</button>
     <button class="tab" onclick="showTab('savings',this)">Savings</button>
     <button class="tab" onclick="showTab('isa',this)">S&amp;P ISA</button>
+    <button class="tab" onclick="showTab('history',this)">History</button>
     <button class="tab" onclick="showTab('settings',this)">⚙</button>
   </div>
 
@@ -367,17 +368,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="card" style="margin-bottom:0"><div class="card-label">Disposable</div><div class="stat-number" id="ov-disp">£0</div></div>
     </div>
     <div class="card"><div class="section-title">Budget Breakdown</div><div id="breakdown-bars"></div></div>
-
-    <!-- Net Worth -->
-    <div class="card" style="background:linear-gradient(135deg,#0a1628,#0d2a1f);border-color:rgba(96,165,250,.2)">
-      <div class="card-label">Your Net Worth</div>
-      <div id="net-worth-value" class="big-number" style="color:var(--blue)">£0</div>
-      <div id="net-worth-sub" class="big-number-sub"></div>
-      <div class="grid2" style="margin-top:14px">
-        <div class="mini-stat"><div class="card-label">Savings pot</div><div id="nw-savings" class="stat-number" style="color:var(--blue)">£0</div></div>
-        <div class="mini-stat"><div class="card-label">ISA (projected)</div><div id="nw-isa" class="stat-number" style="color:var(--green)">£0</div></div>
-      </div>
-    </div>
 
     <!-- Insights -->
     <div class="card">
@@ -616,48 +606,89 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(34,211,160,.12);display:flex;align-items:center;justify-content:center;font-size:20px">👤</div>
-        <div><div style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700">Signed in</div><div id="settings-email" style="font-size:11px;color:var(--muted);margin-top:2px"></div></div>
+        <div><div style="font-size:15px;font-weight:700">Signed in</div><div id="settings-email" style="font-size:11px;color:var(--muted);margin-top:2px"></div></div>
       </div>
-      <button onclick="signOut()" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--muted);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:12px;cursor:pointer">Sign Out</button>
+      <button onclick="signOut()" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--muted);font-size:12px;cursor:pointer">Sign Out</button>
     </div>
+
+    <!-- Payday settings -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <div style="width:40px;height:40px;border-radius:10px;background:rgba(34,211,160,.12);display:flex;align-items:center;justify-content:center;font-size:20px">📅</div>
+        <div><div style="font-size:15px;font-weight:700">Payday & Reset</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Auto-archive spends on payday</div></div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Payday (day of month)</label>
+        <div class="input-wrap"><span class="prefix" style="font-size:12px;color:var(--blue)">#</span>
+          <input class="fin-input" id="payday-day" type="number" inputmode="numeric" placeholder="25" min="1" max="31" oninput="debounceSave();updatePaydayStatus()"/>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:12px">
+        <div>
+          <div style="font-size:13px;color:var(--text)">Auto-reset on payday</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Archives this month's spends automatically</div>
+        </div>
+        <div onclick="toggleAutoReset()" id="auto-reset-toggle"
+          style="width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0">
+          <div id="auto-reset-knob" style="width:20px;height:20px;border-radius:50%;background:white;position:absolute;top:2px;left:2px;transition:left .2s"></div>
+        </div>
+      </div>
+
+      <div id="payday-status" style="font-size:12px;color:var(--muted);margin-bottom:12px"></div>
+
+      <button onclick="manualReset()" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;
+        background:transparent;color:var(--muted);font-size:12px;cursor:pointer">
+        Archive this month's spends now
+      </button>
+    </div>
+
     <div class="card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(34,211,160,.12);display:flex;align-items:center;justify-content:center;font-size:20px">💾</div>
-        <div><div style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700">Export Backup</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Download all data as a file</div></div>
+        <div><div style="font-size:15px;font-weight:700">Export Backup</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Download all data as a file</div></div>
       </div>
-      <button onclick="exportData()" style="width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--green),#0ea5e9);color:#0b0f1a;font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:13px;font-weight:500;cursor:pointer">↓ Export Backup File</button>
+      <button onclick="exportData()" style="width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--green),#0ea5e9);color:#0b0f1a;font-size:13px;font-weight:500;cursor:pointer">↓ Export Backup File</button>
     </div>
 
     <div class="card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(96,165,250,.12);display:flex;align-items:center;justify-content:center;font-size:20px">📂</div>
-        <div><div style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700">Restore from Backup</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Load a previously exported file</div></div>
+        <div><div style="font-size:15px;font-weight:700">Restore from Backup</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Load a previously exported file</div></div>
       </div>
-      <div style="font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6">
-        Select a <strong style="color:var(--muted)">fintrack-backup.json</strong> file. This will overwrite your current data — export first if needed.
-      </div>
+      <div style="font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6">Select a <strong style="color:var(--muted)">fintrack-backup.json</strong> file. This will overwrite your current data.</div>
       <label style="display:block;width:100%;padding:13px;border:1px solid var(--blue);border-radius:10px;
-        background:rgba(96,165,250,.08);color:var(--blue);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;
-        font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.5px;text-align:center">
+        background:rgba(96,165,250,.08);color:var(--blue);font-size:13px;font-weight:500;cursor:pointer;text-align:center">
         ↑ Choose Backup File
         <input type="file" accept=".json" onchange="importData(event)" style="display:none"/>
       </label>
       <div id="import-status" style="margin-top:10px;font-size:12px;display:none"></div>
     </div>
+
     <div class="card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(96,165,250,.12);display:flex;align-items:center;justify-content:center;font-size:20px">📋</div>
-        <div><div style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700">What's Saved</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Current data summary</div></div>
+        <div><div style="font-size:15px;font-weight:700">What's Saved</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Current data summary</div></div>
       </div>
       <div id="data-summary"></div>
     </div>
+
     <div class="card" style="border-color:rgba(239,68,68,.2)">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div style="width:40px;height:40px;border-radius:10px;background:rgba(239,68,68,.12);display:flex;align-items:center;justify-content:center;font-size:20px">🗑</div>
-        <div><div style="font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:15px;font-weight:700;color:var(--red)">Clear All Data</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Cannot be undone</div></div>
+        <div><div style="font-size:15px;font-weight:700;color:var(--red)">Clear All Data</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Cannot be undone</div></div>
       </div>
-      <button onclick="clearAllData()" style="width:100%;padding:13px;border:1px solid var(--red);border-radius:10px;background:rgba(239,68,68,.08);color:var(--red);font-family:Calibri,'Trebuchet MS','Gill Sans',Arial,sans-serif;font-size:13px;font-weight:500;cursor:pointer">Clear Everything</button>
+      <button onclick="clearAllData()" style="width:100%;padding:13px;border:1px solid var(--red);border-radius:10px;background:rgba(239,68,68,.08);color:var(--red);font-size:13px;font-weight:500;cursor:pointer">Clear Everything</button>
     </div>
+  </div>
+
+  <!-- ═══ HISTORY ═══ -->
+  <div id="page-history" class="page">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div><div class="section-title" style="margin-bottom:2px">History</div><div style="font-size:11px;color:var(--muted)">Monthly comparisons</div></div>
+    </div>
+    <div id="history-list"></div>
   </div>
 
   </div><!-- /main -->
@@ -679,6 +710,7 @@ const CAT_COLORS = {'Groceries':'#22d3a0','Eating Out':'#fb923c','Coffee':'#f59e
 let currentUser = null;
 let bills = [];
 let spends = [];
+let autoReset = false;
 let saveTimer = null;
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -904,6 +936,9 @@ async function loadAllData(){
       set('portfolio-invested', sets.portfolio_invested);
       set('portfolio-entry', sets.portfolio_entry);
       if(sets.isa_years) document.getElementById('isa-years').value=sets.isa_years;
+      if(sets.payday_day) set('payday-day', sets.payday_day);
+      autoReset = sets.auto_reset||false;
+      updateAutoResetToggle();
     }
 
     // Bills
@@ -949,6 +984,8 @@ async function saveSettings(){
       sav_rate: v('sav-rate-input')||4.5,
       portfolio_invested: v('portfolio-invested'),
       portfolio_entry: v('portfolio-entry'),
+      payday_day: v('payday-day')||0,
+      auto_reset: autoReset,
       updated_at: new Date().toISOString()
     });
     setSyncStatus('synced');
@@ -1001,8 +1038,9 @@ function showTab(name,btn){
   btn.classList.add('active');
   document.getElementById('page-'+name).classList.add('active');
   updateAll();
-  if(name==='settings') updateSummary();
+  if(name==='settings'){ updateSummary(); updatePaydayStatus(); updateAutoResetToggle(); }
   if(name==='isa') fetchSP500();
+  if(name==='history') loadHistory();
 }
 
 // ── Bills ──────────────────────────────────────────────────────────────────
@@ -1239,7 +1277,6 @@ function updateAll(){
     <div class="stat-row" style="border:none"><span style="color:var(--muted)">ISA/year</span><span class="pill pill-blue">${gbp(isa*12)}</span></div>`;
 
   generateInsights();
-  updateNetWorth();
 
   // Daily
   document.getElementById('daily-month-total').textContent=gbp(spent);
@@ -1443,6 +1480,125 @@ function updatePortfolio(){
   document.getElementById('port-current').style.color = up ? 'var(--green)' : 'var(--red)';
   document.getElementById('port-gain').textContent = (up?'+':'')+gbp(gain)+' ('+gainPct+'%)';
   document.getElementById('port-gain').style.color = up ? 'var(--green)' : 'var(--red)';
+}
+
+// ── Payday & Reset ─────────────────────────────────────────────────────────
+function toggleAutoReset(){
+  autoReset = !autoReset;
+  updateAutoResetToggle();
+  debounceSave();
+}
+
+function updateAutoResetToggle(){
+  const toggle = document.getElementById('auto-reset-toggle');
+  const knob = document.getElementById('auto-reset-knob');
+  if(!toggle) return;
+  toggle.style.background = autoReset ? 'var(--green)' : 'var(--border)';
+  knob.style.left = autoReset ? '22px' : '2px';
+}
+
+function updatePaydayStatus(){
+  const el = document.getElementById('payday-status');
+  if(!el) return;
+  const day = parseInt(document.getElementById('payday-day')?.value)||0;
+  if(!day){ el.textContent=''; return; }
+  const now = new Date();
+  const thisMonth = new Date(now.getFullYear(), now.getMonth(), day);
+  const nextPayday = thisMonth > now
+    ? thisMonth
+    : new Date(now.getFullYear(), now.getMonth()+1, day);
+  const daysUntil = Math.ceil((nextPayday - now) / (1000*60*60*24));
+  el.textContent = daysUntil===0
+    ? '🎉 Payday is today!'
+    : daysUntil===1
+    ? '⏰ Payday is tomorrow'
+    : `📅 Next payday in ${daysUntil} days (${nextPayday.toLocaleDateString('en-GB',{day:'numeric',month:'short'})})`;
+  el.style.color = daysUntil<=2 ? 'var(--green)' : 'var(--muted)';
+  // Auto-reset check
+  if(autoReset && daysUntil===0){
+    const lastReset = localStorage.getItem('last_reset');
+    const todayStr = now.toISOString().slice(0,10);
+    if(lastReset !== todayStr){ archiveSpends(); localStorage.setItem('last_reset', todayStr); }
+  }
+}
+
+async function manualReset(){
+  if(!confirm('Archive this month\'s spends to History and start fresh?')) return;
+  await archiveSpends();
+}
+
+async function archiveSpends(){
+  if(!currentUser) return;
+  const now = new Date();
+  const monthKey = now.toISOString().slice(0,7);
+  const monthSpends = currentMonthSpends();
+  if(!monthSpends.length){ alert('No spends this month to archive.'); return; }
+
+  // Save snapshot to history table
+  const snapshot = {
+    user_id: currentUser.id,
+    month: monthKey,
+    income: v('income'),
+    total_bills: totalBillsAmt(),
+    total_spends: monthTotal(),
+    savings: v('savings'),
+    isa: v('isa'),
+    spend_count: monthSpends.length,
+    top_category: getTopCategory(monthSpends),
+    created_at: new Date().toISOString()
+  };
+  await sb.from('monthly_history').upsert(snapshot, {onConflict:'user_id,month'});
+
+  // Remove current month spends from live table
+  for(const s of monthSpends){
+    if(!String(s.id).startsWith('new_')) await deleteSpend(s.id);
+  }
+  spends = spends.filter(s => !s.date.startsWith(monthKey));
+  renderSpends();
+  updateAll();
+  alert(`✓ ${monthKey} archived to History.`);
+}
+
+function getTopCategory(spendList){
+  const cats={};
+  spendList.forEach(s=>{ cats[s.category]=(cats[s.category]||0)+(parseFloat(s.amount)||0); });
+  return Object.entries(cats).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
+}
+
+// ── History ────────────────────────────────────────────────────────────────
+async function loadHistory(){
+  const el = document.getElementById('history-list');
+  if(!el||!currentUser) return;
+  el.innerHTML='<div style="text-align:center;padding:24px;color:var(--dim);font-size:12px">Loading…</div>';
+  try {
+    const {data} = await sb.from('monthly_history')
+      .select('*').eq('user_id',currentUser.id).order('month',{ascending:false});
+
+    if(!data||!data.length){
+      el.innerHTML='<div style="text-align:center;padding:32px;color:var(--dim);font-size:13px">No history yet.<br><br>History is created when you archive a month\'s spends on payday.</div>';
+      return;
+    }
+
+    el.innerHTML = data.map(h=>{
+      const saved = (h.income||0) - (h.total_bills||0) - (h.total_spends||0);
+      const monthName = new Date(h.month+'-01').toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+      return `<div class="card" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-size:15px;font-weight:700;color:var(--text)">${monthName}</div>
+          <span class="pill ${saved>=0?'pill-green':'pill-red'}">${saved>=0?'+':''}${gbp(saved)}</span>
+        </div>
+        <div class="grid2" style="gap:8px;margin-bottom:8px">
+          <div class="mini-stat"><div class="card-label">Income</div><div class="stat-number" style="color:var(--green);font-size:15px">${gbp(h.income)}</div></div>
+          <div class="mini-stat"><div class="card-label">Fixed Bills</div><div class="stat-number" style="color:var(--red);font-size:15px">${gbp(h.total_bills)}</div></div>
+          <div class="mini-stat"><div class="card-label">Daily Spends</div><div class="stat-number" style="color:var(--orange);font-size:15px">${gbp(h.total_spends)}</div></div>
+          <div class="mini-stat"><div class="card-label">Saved</div><div class="stat-number" style="color:${saved>=0?'var(--blue)':'var(--red)'};font-size:15px">${gbp(Math.abs(saved))}</div></div>
+        </div>
+        ${h.top_category?`<div style="font-size:11px;color:var(--dim)">Top spend category: <span style="color:var(--orange)">${h.top_category}</span> · ${h.spend_count} transactions</div>`:''}
+      </div>`;
+    }).join('');
+  } catch(e){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:var(--red);font-size:12px">Could not load history.</div>';
+  }
 }
 
 // ── Export ─────────────────────────────────────────────────────────────────
