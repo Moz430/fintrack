@@ -1048,6 +1048,7 @@ function addBill(){
   const bill = {id:'new_'+Date.now(), name:'', category:'Other', amount:''};
   bills.push(bill);
   renderBills();
+  updateAll();
 }
 
 function removeBill(id){
@@ -1058,10 +1059,29 @@ function removeBill(id){
 
 function updateBill(id,field,val){
   const b=bills.find(x=>x.id===id);
-  if(b){ b[field]=val; clearTimeout(b._timer); b._timer=setTimeout(()=>saveBill(b),800); updateAll(); }
+  if(b){
+    b[field]=val;
+    clearTimeout(b._timer);
+    b._timer=setTimeout(()=>saveBill(b),800);
+    // Only update the totals/breakdown, don't re-render the bill rows
+    updateTotalsOnly();
+  }
 }
 
 function totalBillsAmt(){ return bills.reduce((s,b)=>s+(parseFloat(b.amount)||0),0); }
+
+// Light update — refreshes overview numbers without re-rendering bill inputs
+function updateTotalsOnly(){
+  const income=v('income'), totalBills=totalBillsAmt(), savings=v('savings'), isa=v('isa');
+  const spent=monthTotal();
+  const disposable=income-totalBills-savings-isa;
+  const dispEl=document.getElementById('ov-disp');
+  const billsEl=document.getElementById('ov-bills');
+  const totalDisp=document.getElementById('bills-total-display');
+  if(dispEl){ dispEl.textContent=gbp(disposable); dispEl.style.color=disposable>=0?'var(--blue)':'var(--red)'; }
+  if(billsEl) billsEl.textContent=gbp(totalBills);
+  if(totalDisp) totalDisp.textContent=gbp(totalBills);
+}
 
 function renderBills(){
   const list=document.getElementById('bills-list');
@@ -1086,7 +1106,6 @@ function renderBills(){
       </div>`;
     list.appendChild(div);
   });
-  updateAll();
 }
 
 // ── Daily Spends ───────────────────────────────────────────────────────────
