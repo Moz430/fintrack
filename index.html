@@ -833,23 +833,6 @@ function generateInsights(){
     </div>`).join('');
 }
 
-// ── Net Worth ──────────────────────────────────────────────────────────────
-function updateNetWorth(){
-  const savCurrent=v('sav-current');
-  const isa=v('isa');
-  const isaYears=parseInt(document.getElementById('isa-years').value)||10;
-  const isaVal=isaProjection(isa,isaYears)[isaYears]||0;
-  const netWorth=savCurrent+isaVal;
-  const el=document.getElementById('net-worth-value');
-  const sub=document.getElementById('nw-savings');
-  const isaEl=document.getElementById('nw-isa');
-  const subText=document.getElementById('net-worth-sub');
-  if(el) el.textContent=gbp(netWorth);
-  if(sub) sub.textContent=gbp(savCurrent);
-  if(isaEl) isaEl.textContent=gbp(isaVal);
-  if(subText) subText.textContent=netWorth>0?`Savings + projected ISA value in ${isaYears} years`:'Add your savings and ISA to see your net worth';
-}
-
 // ── Auth ───────────────────────────────────────────────────────────────────
 function switchAuthTab(tab, btn){
   document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
